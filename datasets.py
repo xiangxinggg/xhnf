@@ -1,6 +1,7 @@
 # --*-- coding:utf-8 --*--
 
 from keras.datasets import mnist, cifar10
+from keras.utils.np_utils import to_categorical
 
 def get_cifar10():
     """Retrieve the CIFAR dataset and process the data."""
