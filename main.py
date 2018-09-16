@@ -45,7 +45,8 @@ def main():
 		nb_classes, batch_size, input_shape, x_train, \
 			x_test, y_train, y_test = get_mnist()
 	elif dataset == 'stock':
-		pass
+		nb_classes, batch_size, input_shape, x_train, \
+			x_test, y_train, y_test = get_stock()
 	
 	do_all(nb_classes, epochs, input_shape, batch_size, x_train, y_train, x_test, y_test);
 
