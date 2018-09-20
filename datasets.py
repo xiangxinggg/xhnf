@@ -62,6 +62,8 @@ def load_csv(fname, col_start=1, row_start=1, delimiter=",", dtype=dtypes.float3
   # print(np.transpose(data))
   return data
 
+#1datetime,            2code,    3open,    4close,    5high,    6low,    7vol,       8amount,       9p_change
+#2018-09-07 15:00:00,  600165,   4.48,     4.48,      4.48,     4.48,    9349.0,     4188352.0,     0.0
 def process_data(data, moving_window=16, columns=8):
   stock_set = np.zeros([0,moving_window,columns])
   label_set = np.zeros([0,2])
@@ -77,7 +79,6 @@ def process_data(data, moving_window=16, columns=8):
     # label_set = np.concatenate((label_set, np.array([data[idx+(moving_window+5),3] - data[idx+(moving_window),3]])))
   # print(stock_set.shape, label_set.shape)
   return stock_set, label_set
-
 
 def load_stock_data():
 	path = "data"
