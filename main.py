@@ -23,7 +23,7 @@ def do_all(nb_classes, epochs, input_shape, batch_size, x_train, y_train,x_test,
 	model.fit(x_train, y_train, \
   	batch_size=batch_size, \
   	epochs=epochs,  \
-  	verbose=0, \
+  	verbose=1, \
   	validation_data=(x_test, y_test), \
   	callbacks=[early_stopper])
 
