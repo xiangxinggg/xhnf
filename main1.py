@@ -4,11 +4,11 @@ import keras
 from keras.callbacks import EarlyStopping
 from keras.layers import Dense, Dropout, Flatten
 from keras.models import Sequential
-from datasets1 import get_mnist
+from datasets1 import get_mnist, get_stock
 from keras.layers.convolutional import Conv2D,MaxPooling2D
 import numpy as np
-seed = 7
-np.random.seed(seed)
+# seed = 7
+# np.random.seed(seed)
 # Helper: Early stopping.
 early_stopper = EarlyStopping(patience=5)
 
@@ -41,10 +41,10 @@ def do_all(nb_classes, epochs, input_shape, batch_size, x_train, y_train,x_test,
 
 def main():
 	#dataset = 'cifar10'
-	dataset = 'mnist'
-	#dataset = 'stock'
+# 	dataset = 'mnist'
+	dataset = 'stock'
 	
-	epochs = 100000
+	epochs = 10
 
 	if dataset == 'cifar10':
 		pass
@@ -53,6 +53,9 @@ def main():
 	elif dataset == 'mnist':
 		nb_classes, batch_size, input_shape, x_train, \
 			x_test, y_train, y_test = get_mnist()
+	elif dataset == 'stock':
+		nb_classes, batch_size, input_shape, x_train, \
+			x_test, y_train, y_test = get_stock()
 	
 	do_all(nb_classes, epochs, input_shape, batch_size, x_train, y_train, x_test, y_test);
 
