@@ -4,7 +4,7 @@ import keras
 from keras.callbacks import EarlyStopping
 from keras.layers import Dense, Dropout, Flatten
 from keras.models import Sequential
-from datasets1 import get_mnist, get_stock
+from datasets1 import get_mnist, get_stock, get_stock1
 from keras.layers.convolutional import Conv2D,MaxPooling2D
 import numpy as np
 # seed = 7
@@ -18,7 +18,7 @@ def do_all(nb_classes, epochs, input_shape, batch_size, x_train, y_train,x_test,
 	                 activation='relu',
 	                 input_shape=input_shape))
 	model.add(Conv2D(64, (3, 3), activation='relu'))
-	model.add(MaxPooling2D(pool_size=(2, 2)))
+#	model.add(MaxPooling2D(pool_size=(2, 2)))
 	model.add(Dropout(0.25))
 	model.add(Flatten())
 	model.add(Dense(128, activation='relu'))
@@ -42,9 +42,10 @@ def do_all(nb_classes, epochs, input_shape, batch_size, x_train, y_train,x_test,
 def main():
 	#dataset = 'cifar10'
 # 	dataset = 'mnist'
-	dataset = 'stock'
+#	dataset = 'stock'
+	dataset = 'stock1'
 	
-	epochs = 10
+	epochs = 10000
 
 	if dataset == 'cifar10':
 		pass
@@ -56,6 +57,9 @@ def main():
 	elif dataset == 'stock':
 		nb_classes, batch_size, input_shape, x_train, \
 			x_test, y_train, y_test = get_stock()
+	elif dataset == 'stock1':
+		nb_classes, batch_size, input_shape, x_train, \
+			x_test, y_train, y_test = get_stock1()
 	
 	do_all(nb_classes, epochs, input_shape, batch_size, x_train, y_train, x_test, y_test);
 
