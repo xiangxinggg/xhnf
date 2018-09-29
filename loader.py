@@ -115,10 +115,12 @@ def load_stock_data(path, moving_window=128, columns=5, train_test_ratio=4.0):
   # read a directory of data
   stocks_set = np.zeros([0,moving_window,columns])
   labels_set = np.zeros([0,2])
+  ii = 0
   for dir_item in os.listdir(path):
     dir_item_path = os.path.join(path, dir_item)
     if os.path.isfile(dir_item_path):
-      print(dir_item_path)
+      ii += 1
+      print("index:",ii,"\t",dir_item_path)
       ss, ls = process_data(load_csv(dir_item_path))
       stocks_set = np.concatenate((stocks_set, ss), axis=0)
       labels_set = np.concatenate((labels_set, ls), axis=0)
@@ -153,7 +155,7 @@ def load_stock_data(path, moving_window=128, columns=5, train_test_ratio=4.0):
 
 
 # stock data loading
-def load_data(path="data_new", moving_window=128, columns=5, train_test_ratio=4.0):
+def load_data(path="data\daily", moving_window=128, columns=5, train_test_ratio=4.0):
   # process a single file's data into usable arrays
   def process_data(data):
     stock_set = np.zeros([0,moving_window,columns])
@@ -173,10 +175,12 @@ def load_data(path="data_new", moving_window=128, columns=5, train_test_ratio=4.
   # read a directory of data
   stocks_set = np.zeros([0,moving_window,columns])
   labels_set = np.zeros([0,1])
+  ii = 0
   for dir_item in os.listdir(path):
     dir_item_path = os.path.join(path, dir_item)
     if os.path.isfile(dir_item_path):
-      print(dir_item_path)
+      ii += 1
+      print("index:",ii,"\t",dir_item_path)
       ss, ls = process_data(load_csv(dir_item_path))
       stocks_set = np.concatenate((stocks_set, ss), axis=0)
       labels_set = np.concatenate((labels_set, ls), axis=0)

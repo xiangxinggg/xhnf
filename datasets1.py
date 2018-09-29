@@ -77,7 +77,7 @@ def get_stock():
 
 def get_stock1():
 	"""Retrieve the STOCK dataset and process the data."""
-	batch_size = 512
+	batch_size = 1024
 	nb_classes = 2
 	
 	# input image dimensions
