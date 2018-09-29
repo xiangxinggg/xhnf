@@ -93,6 +93,7 @@ def load_csv(fname, col_start=2, row_start=0, delimiter=",", dtype=dtypes.float3
     data = np.delete(data, (0), axis=0)
 
   myData = datetime.datetime.strptime('20130801','%Y%m%d')
+  totalDate = 360
   pliteIdx = -1
   for idx in range(data.shape[0]):
     #print('str:', int(data[idx][0]))
@@ -101,15 +102,15 @@ def load_csv(fname, col_start=2, row_start=0, delimiter=",", dtype=dtypes.float3
         pliteIdx = idx
     #print("date:", date)
   if pliteIdx != -1:
-      ignore_start = pliteIdx - 200
+      ignore_start = pliteIdx - totalDate
 
   if pliteIdx > 0:
     for _ in range(ignore_start):
       data = np.delete(data, (0), axis=0)
   l = data.shape[0]
-  if l > 205:
-    for _ in range(l, 205, -1):
-      data = np.delete(data, (205), axis=0)
+  if l > totalDate:
+    for _ in range(l, totalDate, -1):
+      data = np.delete(data, (totalDate), axis=0)
   #print("now len:",l)
 
   for _ in range(col_start):
