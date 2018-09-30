@@ -48,7 +48,7 @@ def main():
 # 	dataset = 'cifar10'
 #	dataset = 'mnist'
 #	dataset = 'stock'
- 	dataset = 'stock1'
+	dataset = 'stock1'
 	
 	epochs = 10000
 
