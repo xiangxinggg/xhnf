@@ -11,14 +11,14 @@ import loader
 
 # nb_classes, batch_size, input_shape, x_train, x_test, y_train, y_test
 def get_mnist():
-	"""Retrieve the MNIST dataset and process the data."""
+	"""Retrieve the MNIST dataset and process the datasets."""
 	batch_size = 128
 	nb_classes = 10
 	
 	# input image dimensions
 	img_rows, img_cols = 28, 28
 	
-	# the data, split between train and test sets
+	# the datasets, split between train and test sets
 	(x_train, y_train), (x_test, y_test) = mnist.load_data()
 	
 	if K.image_data_format() == 'channels_first':
@@ -44,14 +44,14 @@ def get_mnist():
 
 # nb_classes, batch_size, input_shape, x_train, x_test, y_train, y_test
 def get_stock():
-	"""Retrieve the STOCK dataset and process the data."""
+	"""Retrieve the STOCK dataset and process the datasets."""
 	batch_size = 512
 	nb_classes = 2
 	
 	# input image dimensions
 	img_rows, img_cols = 16, 7
 	
-	# the data, split between train and test sets
+	# the datasets, split between train and test sets
 	(x_train, y_train), (x_test, y_test) = stock.load_data()
 	
 	if K.image_data_format() == 'channels_first':
@@ -76,14 +76,14 @@ def get_stock():
 	return (nb_classes, batch_size, input_shape, x_train, x_test, y_train, y_test)
 
 def get_stock1():
-	"""Retrieve the STOCK dataset and process the data."""
+	"""Retrieve the STOCK dataset and process the datasets."""
 	batch_size = 1024
 	nb_classes = 2
 	
 	# input image dimensions
 	img_rows, img_cols = 128, 5
 	
-	# the data, split between train and test sets
+	# the datasets, split between train and test sets
 	(x_train, y_train), (x_test, y_test) = loader.load_data()
 	
 	if K.image_data_format() == 'channels_first':

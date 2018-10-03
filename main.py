@@ -1,55 +1,52 @@
 # --*-- coding:utf-8 --*--
+import keras
+from configs.configs import Configs
+from datasets.datasets import get_data
+from models.model import get_model
 
-from keras.callbacks import EarlyStopping
-from keras.layers import Dense, Dropout, Flatten
-from keras.models import Sequential
-from datasets import get_cifar10, get_mnist
-from keras.layers.convolutional import Conv2D,MaxPooling2D
-import numpy as np
-seed = 7
-np.random.seed(seed)
-# Helper: Early stopping.
-early_stopper = EarlyStopping(patience=5)
+class XHNF (object):
+    def __init__(self):
+        self.config = None
+        self.data = None
+        self.model = None
 
-def do_all(nb_classes, epochs, input_shape, batch_size, x_train, y_train,x_test, y_test):
-	model = Sequential()
-	model.add(Dense(64, input_shape=input_shape))
-	model.add(Dropout(0.2))
-	model.add(Dense(64, activation='relu'))
-	model.add(Dropout(0.2))
-	model.add(Dense(nb_classes, activation='softmax'))
-	model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
+    def init_config(self):
+        self.config = Configs(model='default', dataset='default', epochs=10, batch_size=128)
+    
+    def init_data(self):
+        self.data = get_data(self.config.dataset)
 
-	model.fit(x_train, y_train, \
-  	batch_size=batch_size, \
-  	epochs=epochs,  \
-  	verbose=1, \
-  	validation_data=(x_test, y_test), \
-  	callbacks=[early_stopper])
+    def init_model(self):
+        self.model = get_model(self.config.model, self.data.input_shape, self.data.nb_classes)
 
-	score = model.evaluate(x_test, y_test, verbose=0)
-	print("loss:",score[0])
-	print("accuracy:",score[1])
-
+    def init(self):
+        self.init_config()
+        self.init_data()
+        self.init_model()
+    
+    def train_network(self):
+        self.model.compile(loss=keras.losses.categorical_crossentropy,
+              optimizer=keras.optimizers.Adadelta(),
+              metrics=['accuracy'])
+        
+        self.model.fit(self.data.x_train, self.data.y_train,
+                  batch_size=self.config.batch_size,
+                  epochs=self.config.epochs,
+                  verbose=1,
+                  validation_data=(self.data.x_test, self.data.y_test))
+        score = self.model.evaluate(self.data.x_test, self.data.y_test, verbose=0)
+        print('Test loss:', score[0])
+        print('Test accuracy:', score[1])
+        
+    def do_all(self):
+        self.init()
+        self.train_network()
+    
 def main():
-	dataset = 'cifar10'
-	#dataset = 'mnist'
-	#dataset = 'stock'
-	
-	epochs = 100000
-
-	if dataset == 'cifar10':
-		nb_classes, batch_size, input_shape, x_train, \
-			x_test, y_train, y_test = get_cifar10()
-	elif dataset == 'mnist':
-		nb_classes, batch_size, input_shape, x_train, \
-			x_test, y_train, y_test = get_mnist()
-	elif dataset == 'stock':
-		nb_classes, batch_size, input_shape, x_train, \
-			x_test, y_train, y_test = get_stock()
-	
-	do_all(nb_classes, epochs, input_shape, batch_size, x_train, y_train, x_test, y_test);
-
+    print("Start XHNF.")
+    xhnf = XHNF()
+    xhnf.do_all()
+    print("All Done.")
 
 if __name__ == '__main__':
     main()
