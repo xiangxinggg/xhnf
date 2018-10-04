@@ -10,6 +10,7 @@ from keras.layers import Dense, Dropout, Flatten
 from keras.models import Sequential
 from keras.models import Model
 from keras.layers.convolutional import Conv2D,MaxPooling2D
+from models.resnet import get_resnet_model
 import numpy as np
 
 def get_default_model(input_shape, nb_classes):
@@ -31,5 +32,5 @@ def get_model( name, input_shape, nb_classes):
     if name == 'default':
         model = get_default_model(input_shape, nb_classes)
     elif name == 'resnet':
-        model = None
+        model = get_resnet_model(input_shape, nb_classes)
     return model
