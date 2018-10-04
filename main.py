@@ -11,7 +11,8 @@ class XHNF (object):
         self.model = None
 
     def init_config(self):
-        self.config = Configs(model='default', dataset='default', epochs=10, batch_size=128)
+#         self.config = Configs(model='default', dataset='default', epochs=10, batch_size=128)
+        self.config = Configs(model='default', dataset='cifar10', epochs=10, batch_size=128)
     
     def init_data(self):
         self.data = get_data(self.config.dataset)

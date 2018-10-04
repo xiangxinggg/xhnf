@@ -1,27 +1,26 @@
 from __future__ import print_function
 import keras
-from keras.datasets import mnist
+from keras.datasets import cifar10
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
 
 # nb_classes, batch_size, input_shape, x_train, x_test, y_train, y_test
-def get_mnist():
-	"""Retrieve the MNIST dataset and process the datasets."""
+def get_cifar10():
+	"""Retrieve the cifar10 dataset and process the datasets."""
 	batch_size = 128
 	nb_classes = 10
-	
-	
+
 	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = mnist.load_data()
+	(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+
 	print("shape:",x_train.shape)
-		
 	# input image dimensions
 	img_rows = x_train.shape[1]
 	img_cols = x_train.shape[2]
-	channels = 1
-	
+	channels = x_train.shape[3]
+
 	if K.image_data_format() == 'channels_first':
 	    x_train = x_train.reshape(x_train.shape[0], channels, img_rows, img_cols)
 	    x_test = x_test.reshape(x_test.shape[0], channels, img_rows, img_cols)
@@ -48,12 +47,8 @@ def main():
 	dataset = 'stock'
 	
 	if dataset == 'cifar10':
-		pass
-# 		nb_classes, batch_size, input_shape, x_train, \
-# 			x_test, y_train, y_test = get_cifar10()
-	elif dataset == 'mnist':
 		nb_classes, batch_size, input_shape, x_train, \
-			x_test, y_train, y_test = get_mnist()
+			x_test, y_train, y_test = get_cifar10()
 	
 	print("========================>>>")
 	print('dataset:',dataset)
