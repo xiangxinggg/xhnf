@@ -5,6 +5,9 @@ from datasets.datasets import get_data
 from models.model import get_model
 from keras.callbacks import ModelCheckpoint
 import os
+import numpy as np
+seed = 7
+np.random.seed(seed)
 
 class XHNF (object):
     def __init__(self):
