@@ -44,13 +44,13 @@ def load_csv(last_train_date, total_ahead_dates, fname, col_start=1, row_start=1
       data = np.delete(data, (total_ahead_dates), axis=0)
   #print("now len:",l)
 
-    print('**********reserve date*********')
-    for idx in range(data.shape[0]):
-        print(data[idx][0])
-    print('===================')
-    print('last_train_date:',last_train_date)
-    print('total_ahead_dates:',total_ahead_dates)
-    print('shape:', data.shape)
+#     print('**********reserve date*********')
+#     for idx in range(data.shape[0]):
+#         print(data[idx][0])
+#     print('===================')
+#     print('last_train_date:',last_train_date)
+#     print('total_ahead_dates:',total_ahead_dates)
+#     print('shape:', data.shape)
 
   for _ in range(col_start):
     data = np.delete(data, (0), axis=1)
@@ -75,10 +75,10 @@ def load_stock(last_train_date, total_ahead_dates=360, pre_dates=3, path="data"+
 
       if data[idx+(moving_window+pre_dates),0] > data[idx+(moving_window),0]:
         lbl = [[1.0]]
-        print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'true')
+#         print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'true')
       else:
         lbl = [[0.0]]
-        print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'false')
+#         print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'false')
       label_set = np.concatenate((label_set, lbl), axis=0)
     return stock_set, label_set
 
