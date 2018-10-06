@@ -44,21 +44,21 @@ def load_csv(last_train_date, total_ahead_dates, fname, col_start=2, row_start=0
   return data
 
 # stock datasets loading
-def load_stock(last_train_date, total_ahead_dates=360, path="data"+os.path.sep+"daily", moving_window=128, columns=5, train_test_ratio=4.0):
+def load_stock(last_train_date, total_ahead_dates=360, path="data"+os.path.sep+"daily" \
+               , moving_window=128, columns=5, train_test_ratio=4.0):
   # process a single file's datasets into usable arrays
   def process_data(data):
     stock_set = np.zeros([0,moving_window,columns])
     label_set = np.zeros([0,1])
     for idx in range(data.shape[0] - (moving_window + 5)):
-      stock_set = np.concatenate((stock_set, np.expand_dims(data[range(idx,idx+(moving_window)),:], axis=0)), axis=0)
+      ss = np.expand_dims(data[range(idx,idx+(moving_window)),:], axis=0)
+      stock_set = np.concatenate((stock_set, ss), axis=0)
 
       if data[idx+(moving_window+5),3] > data[idx+(moving_window),3]:
         lbl = [[1.0]]
       else:
         lbl = [[0.0]]
       label_set = np.concatenate((label_set, lbl), axis=0)
-      # label_set = np.concatenate((label_set, np.array([datasets[idx+(moving_window+5),3] - datasets[idx+(moving_window),3]])))
-    # print(stock_set.shape, label_set.shape)
     return stock_set, label_set
 
   # read a directory of datasets
