@@ -12,6 +12,7 @@ class Configs (object):
         self.epochs = epochs
         self.batch_size = batch_size
         self.model = model
+        print('model:',model,';dataset:',dataset,';epochs:',epochs,';batch_size:',batch_size)
 
     def get_dataset(self):
         return self.dataset

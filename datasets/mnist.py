@@ -4,7 +4,8 @@ from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
-from keras import backend as K
+# from keras import backend as K
+from utils.utils import reshape_with_channels
 
 # nb_classes, batch_size, input_shape, x_train, x_test, y_train, y_test
 def get_mnist():
@@ -16,19 +17,8 @@ def get_mnist():
 	(x_train, y_train), (x_test, y_test) = mnist.load_data()
 	print("shape:",x_train.shape)
 
-	# input image dimensions
-	img_rows = x_train.shape[1]
-	img_cols = x_train.shape[2]
-	channels = 1
-	
-	if K.image_data_format() == 'channels_first':
-	    x_train = x_train.reshape(x_train.shape[0], channels, img_rows, img_cols)
-	    x_test = x_test.reshape(x_test.shape[0], channels, img_rows, img_cols)
-	    input_shape = (channels, img_rows, img_cols)
-	else:
-	    x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, channels)
-	    x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, channels)
-	    input_shape = (img_rows, img_cols, channels)
+	(x_train, input_shape) = reshape_with_channels(x_train)
+	(x_test, _) = reshape_with_channels(x_test)
 	
 	x_train = x_train.astype('float32')
 	x_test = x_test.astype('float32')
