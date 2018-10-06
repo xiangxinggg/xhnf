@@ -9,7 +9,6 @@ from keras import backend as K
 # nb_classes, batch_size, input_shape, x_train, x_test, y_train, y_test
 def get_cifar10():
 	"""Retrieve the cifar10 dataset and process the datasets."""
-	batch_size = 128
 	nb_classes = 10
 
 	# the datasets, split between train and test sets
@@ -39,19 +38,14 @@ def get_cifar10():
 	y_train = keras.utils.to_categorical(y_train, nb_classes)
 	y_test = keras.utils.to_categorical(y_test, nb_classes)
 	
-	return (nb_classes, batch_size, input_shape, x_train, x_test, y_train, y_test)
+	return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
 
 
 def main():
-# 	dataset = 'mnist'
-	dataset = 'stock'
-	
-	if dataset == 'cifar10':
-		nb_classes, batch_size, input_shape, x_train, \
-			x_test, y_train, y_test = get_cifar10()
+	nb_classes, input_shape, x_train, \
+		x_test, y_train, y_test = get_cifar10()
 	
 	print("========================>>>")
-	print('dataset:',dataset)
 	print('x_train shape:', x_train.shape)
 	print(x_train.shape[0], 'train samples')
 	print(x_test.shape[0], 'test samples')

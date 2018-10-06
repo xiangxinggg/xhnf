@@ -9,14 +9,13 @@ from keras import backend as K
 # nb_classes, batch_size, input_shape, x_train, x_test, y_train, y_test
 def get_mnist():
 	"""Retrieve the MNIST dataset and process the datasets."""
-	batch_size = 128
 	nb_classes = 10
 	
 	
 	# the datasets, split between train and test sets
 	(x_train, y_train), (x_test, y_test) = mnist.load_data()
 	print("shape:",x_train.shape)
-		
+
 	# input image dimensions
 	img_rows = x_train.shape[1]
 	img_cols = x_train.shape[2]
@@ -40,27 +39,18 @@ def get_mnist():
 	y_train = keras.utils.to_categorical(y_train, nb_classes)
 	y_test = keras.utils.to_categorical(y_test, nb_classes)
 	
-	return (nb_classes, batch_size, input_shape, x_train, x_test, y_train, y_test)
+	return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
 
 
-def main():
-# 	dataset = 'mnist'
-	dataset = 'stock'
-	
-	if dataset == 'cifar10':
-		pass
-# 		nb_classes, batch_size, input_shape, x_train, \
-# 			x_test, y_train, y_test = get_cifar10()
-	elif dataset == 'mnist':
-		nb_classes, batch_size, input_shape, x_train, \
-			x_test, y_train, y_test = get_mnist()
-	
-	print("========================>>>")
-	print('dataset:',dataset)
-	print('x_train shape:', x_train.shape)
-	print(x_train.shape[0], 'train samples')
-	print(x_test.shape[0], 'test samples')
-	print("========================<<<")
-
-if __name__ == '__main__':
-    main()
+# def main():
+# 	nb_classes, input_shape, x_train, \
+# 		x_test, y_train, y_test = get_mnist()
+# 	
+# 	print("========================>>>")
+# 	print('x_train shape:', x_train.shape)
+# 	print(x_train.shape[0], 'train samples')
+# 	print(x_test.shape[0], 'test samples')
+# 	print("========================<<<")
+# 
+# if __name__ == '__main__':
+#     main()
