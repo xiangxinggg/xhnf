@@ -3,6 +3,8 @@ import keras
 from configs.configs import Configs
 from datasets.datasets import get_data
 from models.model import get_model
+from keras.callbacks import ModelCheckpoint
+import os
 
 class XHNF (object):
     def __init__(self):
@@ -30,15 +32,31 @@ class XHNF (object):
         self.model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adadelta(),
               metrics=['accuracy'])
-        
+        filepath = self.getModelFileName()
+        checkpoint = ModelCheckpoint(filepath, monitor='val_loss' \
+                                     , save_weights_only=True,verbose=1,save_best_only=True, period=1)
+        if os.path.exists(filepath):
+            self.model.load_weights(filepath)
+            print("checkpoint_loaded")
         self.model.fit(self.data.x_train, self.data.y_train,
                   batch_size=self.config.batch_size,
                   epochs=self.config.epochs,
                   verbose=1,
-                  validation_data=(self.data.x_test, self.data.y_test))
+                  validation_data=(self.data.x_test, self.data.y_test),
+                  callbacks=[checkpoint])
         score = self.model.evaluate(self.data.x_test, self.data.y_test, verbose=0)
         print('Test loss:', score[0])
         print('Test accuracy:', score[1])
+
+    def getModelFileName(self):
+        records_dir = 'records' \
+            + os.path.sep + self.config.get_model() \
+            + os.path.sep + self.config.get_dataset()
+        file_name = records_dir \
+            + os.path.sep + 'model.h5'
+        if os.path.exists(records_dir) == False:
+            os.makedirs(records_dir)
+        return file_name
         
     def do_all(self):
         self.init()
