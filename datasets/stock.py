@@ -12,7 +12,7 @@ from datasets.loader import load_stock
 def get_stock():
 	"""Retrieve the STOCK dataset and process the datasets."""
 	nb_classes = 2
-	last_train_date = '20130801'
+	last_train_date = '20180711'
 	total_ahead_dates = 360
 	pre_dates = 3
 	path="data"+os.path.sep+"daily"

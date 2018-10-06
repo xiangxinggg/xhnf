@@ -11,7 +11,7 @@ import os
 import datetime
 np.set_printoptions(threshold=np.nan)
 
-def load_csv(last_train_date, total_ahead_dates, fname, col_start=2, row_start=1, delimiter=",", dtype=dtypes.float32):
+def load_csv(last_train_date, total_ahead_dates, fname, col_start=1, row_start=1, delimiter=",", dtype=dtypes.float32):
   data = np.genfromtxt(fname, delimiter=delimiter,skip_header=row_start, dtype=str)
   print('row shape:', data.shape)
 #   print('data[0]',data[0])
@@ -29,7 +29,7 @@ def load_csv(last_train_date, total_ahead_dates, fname, col_start=2, row_start=1
     else:
         date = datetime.datetime.strptime(dateStr,'%Y%m%d')
 
-    if myDate < date and pliteIdx == -1:
+    if myDate > date and pliteIdx == -1:
         pliteIdx = idx
     #print("date:", date)
   if pliteIdx != -1:
@@ -44,18 +44,19 @@ def load_csv(last_train_date, total_ahead_dates, fname, col_start=2, row_start=1
       data = np.delete(data, (total_ahead_dates), axis=0)
   #print("now len:",l)
 
-#     print('**********reserve date*********')
-#     for idx in range(data.shape[0]):
-#         print(data[idx][0])
-#     print('===================')
-#     print('last_train_date:',last_train_date)
-#     print('total_ahead_dates:',total_ahead_dates)
-#     print('shape:', data.shape)
+    print('**********reserve date*********')
+    for idx in range(data.shape[0]):
+        print(data[idx][0])
+    print('===================')
+    print('last_train_date:',last_train_date)
+    print('total_ahead_dates:',total_ahead_dates)
+    print('shape:', data.shape)
 
   for _ in range(col_start):
     data = np.delete(data, (0), axis=1)
   # print(np.transpose(datasets))
   data = data.astype(np.float32)
+  data = data[::-1]
 #   print('data[0]',data[0])
   return data
 
@@ -72,12 +73,12 @@ def load_stock(last_train_date, total_ahead_dates=360, pre_dates=3, path="data"+
       ss = np.expand_dims(data[range(idx,idx+(moving_window)),:], axis=0)
       stock_set = np.concatenate((stock_set, ss), axis=0)
 
-      if data[idx+(moving_window+pre_dates),3] > data[idx+(moving_window),3]:
+      if data[idx+(moving_window+pre_dates),0] > data[idx+(moving_window),0]:
         lbl = [[1.0]]
-#         print(data[idx+(moving_window+pre_dates),3],data[idx+(moving_window),3],'true')
+        print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'true')
       else:
         lbl = [[0.0]]
-#         print(data[idx+(moving_window+pre_dates),3],data[idx+(moving_window),3],'false')
+        print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'false')
       label_set = np.concatenate((label_set, lbl), axis=0)
     return stock_set, label_set
 
