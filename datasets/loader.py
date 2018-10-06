@@ -9,7 +9,6 @@ import functools as ft
 import csv
 import os
 import datetime
-from datashape.coretypes import float32
 np.set_printoptions(threshold=np.nan)
 
 def load_csv(last_train_date, total_ahead_dates, fname, col_start=2, row_start=1, delimiter=",", dtype=dtypes.float32):
