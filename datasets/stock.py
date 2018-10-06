@@ -6,15 +6,18 @@ from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
 
-# import stock
+import os
 from datasets.loader import load_stock
 
 def get_stock():
 	"""Retrieve the STOCK dataset and process the datasets."""
 	nb_classes = 2
+	last_train_date = '20130801'
+	total_ahead_dates = 360
+	path="data"+os.path.sep+"daily"
 
 	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_stock()
+	(x_train, y_train), (x_test, y_test) = load_stock(last_train_date, total_ahead_dates, path)
 
 	# input image dimensions
 	img_rows = x_train.shape[1]

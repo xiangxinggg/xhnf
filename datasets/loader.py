@@ -86,31 +86,31 @@ class DataSet(object):
       labels_new = self._labels[start:end]
       return np.concatenate((images_left, images_new), axis=0), np.concatenate((labels_left, labels_new), axis=0)
 
-def load_csv(fname, col_start=2, row_start=0, delimiter=",", dtype=dtypes.float32):
+def load_csv(last_train_date, total_ahead_dates, fname, col_start=2, row_start=0, delimiter=",", dtype=dtypes.float32):
   data = np.genfromtxt(fname, delimiter=delimiter)
 
   for _ in range(row_start):
     data = np.delete(data, (0), axis=0)
 
-  myData = datetime.datetime.strptime('20130801','%Y%m%d')
-  totalDate = 360
+  myDate = datetime.datetime.strptime(last_train_date,'%Y%m%d')
+
   pliteIdx = -1
   for idx in range(data.shape[0]):
     #print('str:', int(datasets[idx][0]))
     date = datetime.datetime.strptime(str(int(data[idx][0])),'%Y%m%d')
-    if myData < date and pliteIdx == -1:
+    if myDate < date and pliteIdx == -1:
         pliteIdx = idx
     #print("date:", date)
   if pliteIdx != -1:
-      ignore_start = pliteIdx - totalDate
+      ignore_start = pliteIdx - total_ahead_dates
 
   if pliteIdx > 0:
     for _ in range(ignore_start):
       data = np.delete(data, (0), axis=0)
   l = data.shape[0]
-  if l > totalDate:
-    for _ in range(l, totalDate, -1):
-      data = np.delete(data, (totalDate), axis=0)
+  if l > total_ahead_dates:
+    for _ in range(l, total_ahead_dates, -1):
+      data = np.delete(data, (total_ahead_dates), axis=0)
   #print("now len:",l)
 
   for _ in range(col_start):
@@ -179,7 +179,7 @@ def load_stock_data(path, moving_window=128, columns=5, train_test_ratio=4.0):
 
 
 # stock datasets loading
-def load_stock(path="data"+os.path.sep+"daily", moving_window=128, columns=5, train_test_ratio=4.0):
+def load_stock(last_train_date, total_ahead_dates=360, path="data"+os.path.sep+"daily", moving_window=128, columns=5, train_test_ratio=4.0):
   # process a single file's datasets into usable arrays
   def process_data(data):
     stock_set = np.zeros([0,moving_window,columns])
@@ -205,7 +205,7 @@ def load_stock(path="data"+os.path.sep+"daily", moving_window=128, columns=5, tr
     if os.path.isfile(dir_item_path):
       ii += 1
       print("index:",ii,"\t",dir_item_path)
-      ss, ls = process_data(load_csv(dir_item_path))
+      ss, ls = process_data(load_csv(last_train_date, total_ahead_dates,dir_item_path))
       stocks_set = np.concatenate((stocks_set, ss), axis=0)
       labels_set = np.concatenate((labels_set, ls), axis=0)
 
