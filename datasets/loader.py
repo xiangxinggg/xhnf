@@ -9,20 +9,28 @@ import functools as ft
 import csv
 import os
 import datetime
+from _cffi_backend import string
+from datashape.coretypes import float32
 np.set_printoptions(threshold=np.nan)
 
-def load_csv(last_train_date, total_ahead_dates, fname, col_start=2, row_start=0, delimiter=",", dtype=dtypes.float32):
-  data = np.genfromtxt(fname, delimiter=delimiter)
-
-  for _ in range(row_start):
-    data = np.delete(data, (0), axis=0)
+def load_csv(last_train_date, total_ahead_dates, fname, col_start=2, row_start=1, delimiter=",", dtype=dtypes.float32):
+  data = np.genfromtxt(fname, delimiter=delimiter,skip_header=row_start, dtype=str)
+  print('row shape:', data.shape)
+#   print('data[0]',data[0])
+#   for _ in range(row_start):
+#     data = np.delete(data, (0), axis=0)
 
   myDate = datetime.datetime.strptime(last_train_date,'%Y%m%d')
 
   pliteIdx = -1
   for idx in range(data.shape[0]):
-    #print('str:', int(datasets[idx][0]))
-    date = datetime.datetime.strptime(str(int(data[idx][0])),'%Y%m%d')
+    dateStr = str(data[idx][0])
+#     print('str:', dateStr)
+    if dateStr.find('-') > 0 :
+        date = datetime.datetime.strptime(dateStr,'%Y-%m-%d')
+    else:
+        date = datetime.datetime.strptime(dateStr,'%Y%m%d')
+
     if myDate < date and pliteIdx == -1:
         pliteIdx = idx
     #print("date:", date)
@@ -38,23 +46,28 @@ def load_csv(last_train_date, total_ahead_dates, fname, col_start=2, row_start=0
       data = np.delete(data, (total_ahead_dates), axis=0)
   #print("now len:",l)
 
-#   print('**********reserve date*********')
-#   for idx in range(data.shape[0]):
-#       print(data[idx][0])
-#   print('===================')
-#   print('last_train_date:',last_train_date)
-#   print('total_ahead_dates:',total_ahead_dates)
+#     print('**********reserve date*********')
+#     for idx in range(data.shape[0]):
+#         print(data[idx][0])
+#     print('===================')
+#     print('last_train_date:',last_train_date)
+#     print('total_ahead_dates:',total_ahead_dates)
+#     print('shape:', data.shape)
 
   for _ in range(col_start):
     data = np.delete(data, (0), axis=1)
   # print(np.transpose(datasets))
+  data = data.astype(np.float32)
+#   print('data[0]',data[0])
   return data
 
 # stock datasets loading
 def load_stock(last_train_date, total_ahead_dates=360, pre_dates=3, path="data"+os.path.sep+"daily" \
-               , moving_window=128, columns=5, train_test_ratio=4.0):
+               , moving_window=128, train_test_ratio=4.0):
   # process a single file's datasets into usable arrays
   def process_data(data, pre_dates):
+    print('data.shape',data.shape)
+    columns = data.shape[1]
     stock_set = np.zeros([0,moving_window,columns])
     label_set = np.zeros([0,1])
     for idx in range(data.shape[0] - (moving_window + pre_dates)):
@@ -71,7 +84,7 @@ def load_stock(last_train_date, total_ahead_dates=360, pre_dates=3, path="data"+
     return stock_set, label_set
 
   # read a directory of datasets
-  stocks_set = np.zeros([0,moving_window,columns])
+  stocks_set = None
   labels_set = np.zeros([0,1])
   ii = 0
   for dir_item in os.listdir(path):
@@ -80,6 +93,9 @@ def load_stock(last_train_date, total_ahead_dates=360, pre_dates=3, path="data"+
       ii += 1
       print("index:",ii,"\t",dir_item_path)
       ss, ls = process_data(load_csv(last_train_date, total_ahead_dates,dir_item_path), pre_dates=3)
+      if stocks_set is None:
+          print('ss.shape:', ss.shape)
+          stocks_set = np.zeros([0,moving_window,ss.shape[2]])
       stocks_set = np.concatenate((stocks_set, ss), axis=0)
       labels_set = np.concatenate((labels_set, ls), axis=0)
 
