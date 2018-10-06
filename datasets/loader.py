@@ -38,26 +38,35 @@ def load_csv(last_train_date, total_ahead_dates, fname, col_start=2, row_start=0
       data = np.delete(data, (total_ahead_dates), axis=0)
   #print("now len:",l)
 
+#   print('**********reserve date*********')
+#   for idx in range(data.shape[0]):
+#       print(data[idx][0])
+#   print('===================')
+#   print('last_train_date:',last_train_date)
+#   print('total_ahead_dates:',total_ahead_dates)
+
   for _ in range(col_start):
     data = np.delete(data, (0), axis=1)
   # print(np.transpose(datasets))
   return data
 
 # stock datasets loading
-def load_stock(last_train_date, total_ahead_dates=360, path="data"+os.path.sep+"daily" \
+def load_stock(last_train_date, total_ahead_dates=360, pre_dates=3, path="data"+os.path.sep+"daily" \
                , moving_window=128, columns=5, train_test_ratio=4.0):
   # process a single file's datasets into usable arrays
-  def process_data(data):
+  def process_data(data, pre_dates):
     stock_set = np.zeros([0,moving_window,columns])
     label_set = np.zeros([0,1])
-    for idx in range(data.shape[0] - (moving_window + 5)):
+    for idx in range(data.shape[0] - (moving_window + pre_dates)):
       ss = np.expand_dims(data[range(idx,idx+(moving_window)),:], axis=0)
       stock_set = np.concatenate((stock_set, ss), axis=0)
 
-      if data[idx+(moving_window+5),3] > data[idx+(moving_window),3]:
+      if data[idx+(moving_window+pre_dates),3] > data[idx+(moving_window),3]:
         lbl = [[1.0]]
+#         print(data[idx+(moving_window+pre_dates),3],data[idx+(moving_window),3],'true')
       else:
         lbl = [[0.0]]
+#         print(data[idx+(moving_window+pre_dates),3],data[idx+(moving_window),3],'false')
       label_set = np.concatenate((label_set, lbl), axis=0)
     return stock_set, label_set
 
@@ -70,7 +79,7 @@ def load_stock(last_train_date, total_ahead_dates=360, path="data"+os.path.sep+"
     if os.path.isfile(dir_item_path):
       ii += 1
       print("index:",ii,"\t",dir_item_path)
-      ss, ls = process_data(load_csv(last_train_date, total_ahead_dates,dir_item_path))
+      ss, ls = process_data(load_csv(last_train_date, total_ahead_dates,dir_item_path), pre_dates=3)
       stocks_set = np.concatenate((stocks_set, ss), axis=0)
       labels_set = np.concatenate((labels_set, ls), axis=0)
 

@@ -14,10 +14,11 @@ def get_stock():
 	nb_classes = 2
 	last_train_date = '20130801'
 	total_ahead_dates = 360
+	pre_dates = 3
 	path="data"+os.path.sep+"daily"
 
 	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_stock(last_train_date, total_ahead_dates, path)
+	(x_train, y_train), (x_test, y_test) = load_stock(last_train_date, total_ahead_dates, pre_dates, path)
 
 	# input image dimensions
 	img_rows = x_train.shape[1]
