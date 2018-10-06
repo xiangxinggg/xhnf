@@ -9,7 +9,6 @@ import functools as ft
 import csv
 import os
 import datetime
-from _cffi_backend import string
 from datashape.coretypes import float32
 np.set_printoptions(threshold=np.nan)
 
