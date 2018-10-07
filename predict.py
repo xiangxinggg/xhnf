@@ -5,10 +5,10 @@ seed = 7
 np.random.seed(seed)
 
 def main():
-    print("Start XHNF.")
+    print("Start XHNF Predict.")
     xhnf = XHNF()
     xhnf.do_predict()
-    print("XHNF Done.")
+    print("XHNF Predict Done.")
 
 if __name__ == '__main__':
     main()
