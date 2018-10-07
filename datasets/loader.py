@@ -61,7 +61,7 @@ def load_csv(last_train_date, total_ahead_dates, fname, col_start=1, row_start=1
   return data
 
 # stock datasets loading
-def load_stock(last_train_date, total_ahead_dates=360, pre_dates=3, path="data"+os.path.sep+"daily" \
+def load_stock(p_call, last_train_date, total_ahead_dates=360, pre_dates=3, path="data"+os.path.sep+"daily" \
                , moving_window=128, train_test_ratio=4.0):
   # process a single file's datasets into usable arrays
   def process_data(data, pre_dates):
@@ -73,13 +73,14 @@ def load_stock(last_train_date, total_ahead_dates=360, pre_dates=3, path="data"+
       ss = np.expand_dims(data[range(idx,idx+(moving_window)),:], axis=0)
       stock_set = np.concatenate((stock_set, ss), axis=0)
 
-      if data[idx+(moving_window+pre_dates),0] > data[idx+(moving_window),0]:
-        lbl = [[1.0]]
-#         print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'true')
-      else:
-        lbl = [[0.0]]
-#         print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'false')
-      label_set = np.concatenate((label_set, lbl), axis=0)
+      label_set = p_call(data, idx, moving_window, pre_dates, label_set)
+#       if data[idx+(moving_window+pre_dates),0] > data[idx+(moving_window),0]:
+#         lbl = [[1.0]]
+# #         print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'true')
+#       else:
+#         lbl = [[0.0]]
+# #         print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'false')
+#       label_set = np.concatenate((label_set, lbl), axis=0)
     return stock_set, label_set
 
   # read a directory of datasets

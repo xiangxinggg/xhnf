@@ -1,3 +1,4 @@
+# --*-- coding:utf-8 --*--
 from __future__ import print_function
 import keras
 from keras.datasets import mnist
@@ -6,9 +7,33 @@ from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 # from keras import backend as K
 from utils.utils import reshape_with_channels
-
+import numpy as np
 import os
 from datasets.loader import load_stock
+
+# open, Hight, close, low . ^ or V
+def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
+# 	print('ohcl_callback')
+	start = idx+moving_window
+	end = start+pre_dates
+	sum = 0
+	for i in range(start, end):
+		for n in range(4):
+			sum += data[i+1,n]-data[i,n]
+# 			print('i',i,'n',n,'+1',data[i+1,n], '0', data[i,n])
+	print('sum', sum)
+	if sum > 0 :
+		lbl = [[1.0]]
+	else:
+		lbl = [[0.0]]
+# 	if data[idx+(moving_window+pre_dates),0] > data[idx+(moving_window),0]:
+# 	  lbl = [[1.0]]
+# 	  print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'up')
+# 	else:
+# 	  lbl = [[0.0]]
+# 	  print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'down')
+	label_set = np.concatenate((label_set, lbl), axis=0)
+	return label_set
 
 def get_stock():
 	"""Retrieve the STOCK dataset and process the datasets."""
@@ -19,7 +44,7 @@ def get_stock():
 	path="data"+os.path.sep+"daily"
 
 	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_stock(last_train_date, total_ahead_dates, pre_dates, path)
+	(x_train, y_train), (x_test, y_test) = load_stock(ohcl_callback, last_train_date, total_ahead_dates, pre_dates, path)
 
 	(x_train, input_shape) = reshape_with_channels(x_train)
 	(x_test, _) = reshape_with_channels(x_test)
