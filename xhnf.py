@@ -19,7 +19,7 @@ class XHNF (object):
 #         self.config = Configs(model='default', dataset='default', epochs=10, batch_size=128)
 #         self.config = Configs(model='resnet', dataset='cifar10', epochs=10, batch_size=128)
 #         self.config = Configs(model='resnet', dataset='mnist', epochs=10, batch_size=128)
-        self.config = Configs(model='resnet', dataset='stock', epochs=10, batch_size=128)
+        self.config = Configs(model='resnet', dataset='stock', epochs=10000, batch_size=1024)
     
     def init_data(self):
         self.data = get_data(self.config.dataset)
