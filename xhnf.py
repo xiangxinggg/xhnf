@@ -5,7 +5,7 @@ from datasets.datasets import get_data, get_predict_data
 from models.model import get_model
 from keras.callbacks import ModelCheckpoint
 import os
-# import numpy as np
+import numpy as np
 # seed = 7
 # np.random.seed(seed)
 
@@ -83,6 +83,7 @@ class XHNF (object):
             self.model.load_weights(filepath)
             print("checkpoint_loaded")
         y = self.model.predict(self.data.x_train)
+        y = np.concatenate((y, self.data.y_train), axis=1)
         print(y)
 
     def do_all(self):
