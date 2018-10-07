@@ -57,48 +57,55 @@ class Loader (object):
         #   print('last_train_date:', last_train_date)
         #   print('total_ahead_dates:', total_ahead_dates)
         #   print('shape:', data.shape)
-        
+        date = np.split(data, [1,data.shape[1]], axis=1)[0]
         for _ in range(col_start):
           data = np.delete(data, (0), axis=1)
         # print(np.transpose(datasets))
         data = data.astype(np.float32)
         data = data[::-1]
+        date = date[::-1]
         #   print('data[0]',data[0])
-        return data
+        return data, date
 
   # process a single file's datasets into usable arrays
-    def process_data(self, data, pre_dates, moving_window, p_call):
+    def process_data(self, data, date, code, pre_dates, moving_window, p_call):
       print('data.shape', data.shape)
       columns = data.shape[1]
       stock_set = np.zeros([0, moving_window, columns])
       label_set = np.zeros([0, 1])
+      predict_set = np.zeros([0, 2])
       for idx in range(data.shape[0] - (moving_window + pre_dates)):
           ss = np.expand_dims(data[range(idx, idx + (moving_window)), :], axis=0)
           stock_set = np.concatenate((stock_set, ss), axis=0)
           label_set = p_call(data, idx, moving_window, pre_dates, label_set)
-      return stock_set, label_set
+          dbl = [[date[idx+moving_window],code]]
+          predict_set = np.concatenate((predict_set, dbl), axis=0)
+      return stock_set, label_set, predict_set
 
     def read_raw_data(self, p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window):
       # read a directory of datasets
       stocks_set = None
       labels_set = np.zeros([0, 1])
+      predict_set = np.zeros([0, 2])
       ii = 0
       for dir_item in os.listdir(path):
         dir_item_path = os.path.join(path, dir_item)
         if os.path.isfile(dir_item_path):
           ii += 1
           print("index:", ii, "\t", dir_item_path)
-          data = self.load_csv(last_train_date, total_ahead_dates, dir_item_path)
-          ss, ls = self.process_data(data, pre_dates, moving_window, p_call)
+          code = dir_item[:6]
+          data,date = self.load_csv(last_train_date, total_ahead_dates, dir_item_path)
+          ss, ls, ps = self.process_data(data, date, code, pre_dates, moving_window, p_call)
           if stocks_set is None:
               print('ss.shape:', ss.shape)
               stocks_set = np.zeros([0, moving_window, ss.shape[2]])
           stocks_set = np.concatenate((stocks_set, ss), axis=0)
           labels_set = np.concatenate((labels_set, ls), axis=0)
-      return (stocks_set, labels_set)
+          predict_set = np.concatenate((predict_set, ps), axis=0)
+      return (stocks_set, labels_set, predict_set)
 
     def read_train_data(self, p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio):
-      (stocks_set, labels_set) = self.read_raw_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window)
+      (stocks_set, labels_set, _) = self.read_raw_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window)
       
       # shuffling the datasets
       perm = np.arange(labels_set.shape[0])
@@ -128,3 +135,12 @@ def load_stock(p_call, last_train_date, total_ahead_dates=360, pre_dates=3, path
                , moving_window=128, train_test_ratio=4.0):
     loader = Loader()
     return loader.read_train_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio)
+
+
+def load_predict_stock(p_call, last_train_date, total_ahead_dates=360, pre_dates=3, path="data" + os.path.sep + "daily" \
+               , moving_window=128, train_test_ratio=4.0):
+    loader = Loader()
+    (stocks_set, labels_set, predict_set) = loader.read_raw_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window)
+    return (stocks_set, labels_set), (stocks_set, predict_set)
+
+#     return loader.read_train_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio)
