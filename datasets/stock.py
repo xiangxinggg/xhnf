@@ -21,7 +21,7 @@ def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
 		for n in range(4):
 			sum += data[i+1,n]-data[i,n]
 # 			print('i',i,'n',n,'+1',data[i+1,n], '0', data[i,n])
-	print('sum', sum)
+# 	print('sum', sum)
 	if sum > 0 :
 		lbl = [[1.0]]
 	else:
