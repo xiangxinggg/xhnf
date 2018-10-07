@@ -1,7 +1,7 @@
 # --*-- coding:utf-8 --*--
 import keras
 from configs.configs import Configs
-from datasets.datasets import get_data
+from datasets.datasets import get_data, get_predict_data
 from models.model import get_model
 from keras.callbacks import ModelCheckpoint
 import os
@@ -14,24 +14,34 @@ class XHNF (object):
         self.config = None
         self.data = None
         self.model = None
+        self.predict_data = None
 
     def init_config(self):
 #         self.config = Configs(model='default', dataset='default', epochs=10, batch_size=128)
 #         self.config = Configs(model='resnet', dataset='cifar10', epochs=10, batch_size=128)
 #         self.config = Configs(model='resnet', dataset='mnist', epochs=10, batch_size=128)
-        self.config = Configs(model='resnet', dataset='stock', epochs=10000, batch_size=1024)
+        self.config = Configs(model='resnet', dataset='stock', epochs=10000, batch_size=128)
     
     def init_data(self):
         self.data = get_data(self.config.dataset)
+
+    def init_predict_data(self):
+        self.predict_data = get_predict_data(self.config.dataset)
+        self.data = self.predict_data
 
     def init_model(self):
         self.model = get_model(self.config.model, self.data.input_shape, self.data.nb_classes)
 
     def init(self):
         self.init_config()
-        self.init_data()
+        self.init_predict_data()
         self.init_model()
     
+    def init_predict(self):
+        self.init_config()
+        self.init_predict_data()
+        self.init_model()
+        
     def train_network(self):
         self.model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adadelta(),
@@ -64,6 +74,16 @@ class XHNF (object):
 
     def do_predict(self):
         print('do predict.')
+        self.init_predict()
+        self.model.compile(loss=keras.losses.categorical_crossentropy,
+              optimizer=keras.optimizers.Adadelta(),
+              metrics=['accuracy'])
+        filepath = self.getModelFileName()
+        if os.path.exists(filepath):
+            self.model.load_weights(filepath)
+            print("checkpoint_loaded")
+        y = self.model.predict(self.data.x_train)
+        print(y)
 
     def do_all(self):
         self.init()

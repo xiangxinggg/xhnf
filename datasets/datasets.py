@@ -6,7 +6,7 @@ Created on 2018.10.3
 '''
 from datasets.mnist import get_mnist
 from datasets.cifar10 import get_cifar10
-from datasets.stock import get_stock
+from datasets.stock import get_stock, get_predict_stock
 from entitys.entitys import Entitys
 
 def get_data( name):
@@ -22,6 +22,20 @@ def get_data( name):
     elif name == 'stock':
         nb_classes, input_shape, x_train, \
             x_test, y_train, y_test = get_stock()
+        entitys = Entitys(input_shape, nb_classes, x_train, y_train, x_test, y_test)
+    
+    return entitys
+
+
+def get_predict_data( name):
+    entitys = None
+    if name == 'mnist' or name == 'default':
+        pass
+    elif name == 'cifar10':
+        pass
+    elif name == 'stock':
+        nb_classes, input_shape, x_train, \
+            x_test, y_train, y_test = get_predict_stock()
         entitys = Entitys(input_shape, nb_classes, x_train, y_train, x_test, y_test)
     
     return entitys
