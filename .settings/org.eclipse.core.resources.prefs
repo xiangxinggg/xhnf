@@ -5,4 +5,6 @@ encoding//datasets/stock.py=utf-8
 encoding//models/model.py=utf-8
 encoding//utils/utils.py=utf-8
 encoding//xhnf/main1.py=utf-8
-encoding/main.py=utf-8
+encoding/predict.py=utf-8
+encoding/train.py=utf-8
+encoding/xhnf.py=utf-8
