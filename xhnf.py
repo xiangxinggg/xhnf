@@ -34,7 +34,7 @@ class XHNF (object):
 
     def init(self):
         self.init_config()
-        self.init_predict_data()
+        self.init_data()
         self.init_model()
     
     def init_predict(self):
