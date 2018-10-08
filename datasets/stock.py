@@ -38,7 +38,7 @@ def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
 def get_stock():
 	"""Retrieve the STOCK dataset and process the datasets."""
 	nb_classes = 2
-	last_train_date = '20180711'
+	last_train_date = '20150711'
 	total_ahead_dates = 200
 	pre_dates = 3
 	path="data"+os.path.sep+"daily"
@@ -64,7 +64,7 @@ def get_stock():
 def get_predict_stock():
 	nb_classes = 2
 	last_train_date = '20180711'
-	total_ahead_dates = 200
+	total_ahead_dates = 100
 	pre_dates = 3
 	path="data"+os.path.sep+"daily"
 
