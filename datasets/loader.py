@@ -78,7 +78,7 @@ class Loader (object):
           ss = np.expand_dims(data[range(idx, idx + (moving_window)), :], axis=0)
           stock_set = np.concatenate((stock_set, ss), axis=0)
           label_set = p_call(data, idx, moving_window, pre_dates, label_set)
-          dbl = [[date[idx+moving_window],code]]
+          dbl = [[date[idx+moving_window,0],code]]
           predict_set = np.concatenate((predict_set, dbl), axis=0)
       return stock_set, label_set, predict_set
 
