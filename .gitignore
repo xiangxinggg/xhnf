@@ -1,4 +1,5 @@
 records
+__pycache__
 data
 *.bak
 *.pyc
