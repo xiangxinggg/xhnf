@@ -132,14 +132,8 @@ class Loader (object):
 
 
     def read_predict_data(self, p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio):
-      (stocks_set, labels_set, _) = self.read_raw_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window)
-      
-      # shuffling the datasets
-      perm = np.arange(labels_set.shape[0])
-      np.random.shuffle(perm)
-      stocks_set = stocks_set[perm]
-      labels_set = labels_set[perm]
-    
+      (stocks_set, labels_set, predict_set) = self.read_raw_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window)
+
       # normalize the datasets
       stocks_set_ = np.zeros(stocks_set.shape)
       for i in range(len(stocks_set)):
@@ -148,14 +142,8 @@ class Loader (object):
         stocks_set_[i] = (stocks_set[i] - min) / (max - min)
       stocks_set = stocks_set_
       # labels_set = np.transpose(labels_set)
-    
-      # selecting 1/5 for testing, and 4/5 for training
-      train_test_idx = int((1.0 / (train_test_ratio + 1.0)) * labels_set.shape[0])
-      train_stocks = stocks_set[train_test_idx:, :, :]
-      train_labels = labels_set[train_test_idx:]
-      test_stocks = stocks_set[:train_test_idx, :, :]
-      test_labels = labels_set[:train_test_idx]
-      return (train_stocks, train_labels), (test_stocks, test_labels)
+
+      return (stocks_set, labels_set), (stocks_set, predict_set)
   
 # stock datasets loading
 def load_stock(p_call, last_train_date, total_ahead_dates=360, pre_dates=3, path="data" + os.path.sep + "daily" \
