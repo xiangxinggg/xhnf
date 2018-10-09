@@ -19,7 +19,7 @@ class Loader (object):
     def load_csv(self, last_train_date, total_ahead_dates, fname \
                  , col_start=1, row_start=1, delimiter=",", dtype=dtypes.float32):
         data = np.genfromtxt(fname, delimiter=delimiter, skip_header=row_start, dtype=str)
-        print('row shape:', data.shape)
+        #print('row shape:', data.shape)
         #   print('data[0]',data[0])
         #   for _ in range(row_start):
         #     data = np.delete(data, (0), axis=0)
@@ -69,7 +69,7 @@ class Loader (object):
 
   # process a single file's datasets into usable arrays
     def process_data(self, data, date, code, pre_dates, moving_window, p_call, predict=False):
-      print('data.shape', data.shape)
+      #print('data.shape', data.shape)
       columns = data.shape[1]
       stock_set = np.zeros([0, moving_window, columns])
       label_set = np.zeros([0, 1])
@@ -115,7 +115,7 @@ class Loader (object):
           data,date = self.load_csv(last_train_date, total_ahead_dates, dir_item_path)
           ss, ls, ps = self.process_data(data, date, code, pre_dates, moving_window, p_call, predict)
           if stocks_set is None:
-              print('ss.shape:', ss.shape)
+              #print('ss.shape:', ss.shape)
               stocks_set = np.zeros([0, moving_window, ss.shape[2]])
           stocks_set = np.concatenate((stocks_set, ss), axis=0)
           labels_set = np.concatenate((labels_set, ls), axis=0)
@@ -162,7 +162,23 @@ class Loader (object):
       # labels_set = np.transpose(labels_set)
 
       return (stocks_set, labels_set), (stocks_set, predict_set)
+
+
+    def read_test_data(self, p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio):
+      (stocks_set, labels_set, predict_set) = self.read_raw_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window)
+
+      # normalize the datasets
+      stocks_set_ = np.zeros(stocks_set.shape)
+      for i in range(len(stocks_set)):
+        min = stocks_set[i].min(axis=0)
+        max = stocks_set[i].max(axis=0)
+        stocks_set_[i] = (stocks_set[i] - min) / (max - min)
+      stocks_set = stocks_set_
+      # labels_set = np.transpose(labels_set)
+
+      return (stocks_set, labels_set), (stocks_set, predict_set)
   
+
 # stock datasets loading
 def load_stock(p_call, last_train_date, total_ahead_dates=360, pre_dates=3, path="data" + os.path.sep + "daily" \
                , moving_window=128, train_test_ratio=4.0):
@@ -174,3 +190,9 @@ def load_predict_stock(p_call, last_train_date, total_ahead_dates=360, pre_dates
                , moving_window=128, train_test_ratio=4.0):
     loader = Loader()
     return loader.read_predict_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio)
+
+
+def load_test_stock(p_call, last_train_date, total_ahead_dates=360, pre_dates=3, path="data" + os.path.sep + "daily" \
+               , moving_window=128, train_test_ratio=4.0):
+    loader = Loader()
+    return loader.read_test_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio)

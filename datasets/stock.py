@@ -9,7 +9,7 @@ from keras.layers import Conv2D, MaxPooling2D
 from utils.utils import reshape_with_channels
 import numpy as np
 import os
-from datasets.loader import load_stock, load_predict_stock
+from datasets.loader import load_stock, load_predict_stock, load_test_stock
 
 # open, Hight, close, low . ^ or V
 def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
@@ -38,8 +38,8 @@ def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
 def get_stock():
 	"""Retrieve the STOCK dataset and process the datasets."""
 	nb_classes = 2
-	last_train_date = '20150711'
-	total_ahead_dates = 200
+	last_train_date = '20160711'
+	total_ahead_dates = 256
 	pre_dates = 3
 	path="data"+os.path.sep+"daily"
 
@@ -70,6 +70,31 @@ def get_predict_stock():
 
 	# the datasets, split between train and test sets
 	(x_train, y_train), (x_test, y_test) = load_predict_stock(ohcl_callback, last_train_date, total_ahead_dates, pre_dates, path)
+
+	(x_train, input_shape) = reshape_with_channels(x_train)
+	(x_test, _) = reshape_with_channels(x_test)
+	
+# 	x_train = x_train.astype('float32')
+# 	x_test = x_test.astype('float32')
+# 	x_train /= 255
+# 	x_test /= 255
+# 	print("*********** y_test:", y_test)
+	# convert class vectors to binary class matrices
+	y_train = keras.utils.to_categorical(y_train, nb_classes)
+# 	y_test = keras.utils.to_categorical(y_test, nb_classes)
+# 	print("######## y_test:", y_test)
+	
+	return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
+
+def get_test_stock():
+	nb_classes = 2
+	last_train_date = '20180713'
+	total_ahead_dates = 200
+	pre_dates = 3
+	path="data"+os.path.sep+"daily"
+
+	# the datasets, split between train and test sets
+	(x_train, y_train), (x_test, y_test) = load_test_stock(ohcl_callback, last_train_date, total_ahead_dates, pre_dates, path)
 
 	(x_train, input_shape) = reshape_with_channels(x_train)
 	(x_test, _) = reshape_with_channels(x_test)

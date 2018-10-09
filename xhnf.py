@@ -1,7 +1,7 @@
 # --*-- coding:utf-8 --*--
 import keras
 from configs.configs import Configs
-from datasets.datasets import get_data, get_predict_data
+from datasets.datasets import get_data, get_predict_data, get_test_data
 from models.model import get_model
 from keras.callbacks import ModelCheckpoint
 import os
@@ -29,6 +29,10 @@ class XHNF (object):
         self.predict_data = get_predict_data(self.config.dataset)
         self.data = self.predict_data
 
+    def init_test_data(self):
+        self.predict_data = get_test_data(self.config.dataset)
+        self.data = self.predict_data
+
     def init_model(self):
         self.model = get_model(self.config.model, self.data.input_shape, self.data.nb_classes)
 
@@ -40,6 +44,11 @@ class XHNF (object):
     def init_predict(self):
         self.init_config()
         self.init_predict_data()
+        self.init_model()
+
+    def init_test(self):
+        self.init_config()
+        self.init_test_data()
         self.init_model()
         
     def train_network(self):
@@ -59,6 +68,39 @@ class XHNF (object):
                   validation_data=(self.data.x_test, self.data.y_test),
                   callbacks=[checkpoint])
         score = self.model.evaluate(self.data.x_test, self.data.y_test, verbose=0)
+        print('Test loss:', score[0])
+        print('Test accuracy:', score[1])
+
+    def test(self):
+        self.model.compile(loss=keras.losses.categorical_crossentropy,
+              optimizer=keras.optimizers.Adadelta(),
+              metrics=['accuracy'])
+        filepath = self.getModelFileName()
+        checkpoint = ModelCheckpoint(filepath, monitor='val_loss' \
+                                     , save_weights_only=True,verbose=1,save_best_only=True, period=1)
+        if os.path.exists(filepath):
+            self.model.load_weights(filepath)
+            print("checkpoint_loaded")
+#         self.model.fit(self.data.x_train, self.data.y_train,
+#                   batch_size=self.config.batch_size,
+#                   epochs=self.config.epochs,
+#                   verbose=1,
+#                   validation_data=(self.data.x_test, self.data.y_test),
+#                   callbacks=[checkpoint])
+
+        y_predict = self.model.predict(self.data.x_train)
+        y_res = y_predict[:,1]-y_predict[:,0]
+        y_res = y_res.reshape(y_res.shape[0],1)
+
+        yt = np.delete(self.data.y_train, (0), axis=1)
+
+        y = np.concatenate((self.data.y_test, y_res), axis=1)
+        #y = np.concatenate((y, y_predict), axis=1)
+        y = np.concatenate((y, yt), axis=1)
+        #y = np.concatenate((y, self.predict_data.y_train), axis=1)
+        print(y)
+        
+        score = self.model.evaluate(self.data.x_train, self.data.y_train, verbose=1)
         print('Test loss:', score[0])
         print('Test accuracy:', score[1])
 
@@ -94,14 +136,18 @@ class XHNF (object):
         #y = np.concatenate((y, self.predict_data.y_train), axis=1)
         print(y)
 
-    def do_all(self):
+    def do_train(self):
         self.init()
         self.train_network()
+
+    def do_test(self):
+        self.init_test()
+        self.test()
     
 def main():
     print("Start XHNF.")
     xhnf = XHNF()
-    xhnf.do_all()
+    xhnf.do_train()
     print("All Done.")
 
 if __name__ == '__main__':

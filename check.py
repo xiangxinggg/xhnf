@@ -7,7 +7,7 @@ np.random.seed(seed)
 def main():
     print("Start XHNF Train.")
     xhnf = XHNF()
-    xhnf.do_train()
+    xhnf.do_test()
     print("XHNF Train Done.")
 
 if __name__ == '__main__':
