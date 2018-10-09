@@ -84,7 +84,7 @@ class XHNF (object):
             print("checkpoint_loaded")
         y = self.model.predict(self.predict_data.x_train)
         y = np.concatenate((y, self.predict_data.y_train), axis=1)
-        y = np.concatenate((y, self.predict_data.y_test), axis=1)
+#        y = np.concatenate((y, self.predict_data.y_test), axis=1)
         print(y)
 
     def do_all(self):
