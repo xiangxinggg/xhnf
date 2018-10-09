@@ -68,21 +68,39 @@ class Loader (object):
         return data, date
 
   # process a single file's datasets into usable arrays
-    def process_data(self, data, date, code, pre_dates, moving_window, p_call):
+    def process_data(self, data, date, code, pre_dates, moving_window, p_call, predict=False):
       print('data.shape', data.shape)
       columns = data.shape[1]
       stock_set = np.zeros([0, moving_window, columns])
       label_set = np.zeros([0, 1])
       predict_set = np.zeros([0, 2])
+      if predict == True:
+          start = data.shape[0] - (moving_window + pre_dates)
+          end = data.shape[0] - (moving_window)
+          if end < 0:
+              end = 0
+          if start < 0:
+              start = 0
+
+          print('start:',start,'end',end)
+          for idx in range(start, end):
+              ss = np.expand_dims(data[range(idx, idx + (moving_window)), :], axis=0)
+              stock_set = np.concatenate((stock_set, ss), axis=0)
+              lbl = [[0.0]]
+              label_set = np.concatenate((label_set, lbl), axis=0)
+#               label_set = p_call(data, idx, moving_window, pre_dates, label_set)
+              dbl = [[date[idx+moving_window,0],"*"+code]]
+              predict_set = np.concatenate((predict_set, dbl), axis=0)
+
       for idx in range(data.shape[0] - (moving_window + pre_dates)):
           ss = np.expand_dims(data[range(idx, idx + (moving_window)), :], axis=0)
           stock_set = np.concatenate((stock_set, ss), axis=0)
           label_set = p_call(data, idx, moving_window, pre_dates, label_set)
-          dbl = [[date[idx+moving_window,0],code]]
+          dbl = [[date[idx+moving_window,0],"#"+code]]
           predict_set = np.concatenate((predict_set, dbl), axis=0)
       return stock_set, label_set, predict_set
 
-    def read_raw_data(self, p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window):
+    def read_raw_data(self, p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, predict=False):
       # read a directory of datasets
       stocks_set = None
       labels_set = np.zeros([0, 1])
@@ -95,7 +113,7 @@ class Loader (object):
           print("index:", ii, "\t", dir_item_path)
           code = dir_item[:6]
           data,date = self.load_csv(last_train_date, total_ahead_dates, dir_item_path)
-          ss, ls, ps = self.process_data(data, date, code, pre_dates, moving_window, p_call)
+          ss, ls, ps = self.process_data(data, date, code, pre_dates, moving_window, p_call, predict)
           if stocks_set is None:
               print('ss.shape:', ss.shape)
               stocks_set = np.zeros([0, moving_window, ss.shape[2]])
@@ -132,7 +150,7 @@ class Loader (object):
 
 
     def read_predict_data(self, p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio):
-      (stocks_set, labels_set, predict_set) = self.read_raw_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window)
+      (stocks_set, labels_set, predict_set) = self.read_raw_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, predict=True)
 
       # normalize the datasets
       stocks_set_ = np.zeros(stocks_set.shape)
