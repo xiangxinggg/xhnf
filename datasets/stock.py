@@ -14,13 +14,13 @@ from datasets.loader import load_stock, load_predict_stock
 # open, Hight, close, low . ^ or V
 def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
 # 	print('ohcl_callback')
-	start = idx+moving_window
-	end = start+pre_dates
+	start = idx+moving_window+1
+	end = start+pre_dates-1
 	sum = 0
 	for i in range(start, end):
 		for n in range(4):
 			sum += data[i+1,n]-data[i,n]
-# 			print('i',i,'n',n,'+1',data[i+1,n], '0', data[i,n])
+			#print('i',i,'n',n,'+1',data[i+1,n], '0', data[i,n])
 # 	print('sum', sum)
 	if sum > 0 :
 		lbl = [[1.0]]
