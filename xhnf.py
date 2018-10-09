@@ -83,8 +83,15 @@ class XHNF (object):
             self.model.load_weights(filepath)
             print("checkpoint_loaded")
         y_predict = self.model.predict(self.predict_data.x_train)
-        y = np.concatenate((self.predict_data.y_test, y_predict), axis=1)
-        y = np.concatenate((y, self.predict_data.y_train), axis=1)
+        y_res = y_predict[:,1]-y_predict[:,0]
+        y_res = y_res.reshape(y_res.shape[0],1)
+
+        yt = np.delete(self.predict_data.y_train, (0), axis=1)
+
+        y = np.concatenate((self.predict_data.y_test, y_res), axis=1)
+        #y = np.concatenate((y, y_predict), axis=1)
+        y = np.concatenate((y, yt), axis=1)
+        #y = np.concatenate((y, self.predict_data.y_train), axis=1)
         print(y)
 
     def do_all(self):
