@@ -89,7 +89,7 @@ def get_predict_stock():
 def get_test_stock():
 	nb_classes = 2
 	last_train_date = '20180713'
-	total_ahead_dates = 200
+	total_ahead_dates = 133
 	pre_dates = 3
 	path="data"+os.path.sep+"daily"
 
