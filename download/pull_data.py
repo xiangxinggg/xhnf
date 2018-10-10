@@ -26,9 +26,10 @@ if __name__ == "__main__":
     isExists=os.path.exists(data_save_path)
     if not isExists:
         os.makedirs(data_save_path)
-
+    i = 0
     for stock in all_stock_list[:]:
-        print('reading data from ' + stock)
+        i += 1
+        print(i,'downloading ' + stock)
         df = get_data(code = stock)
         save_path = os.path.join(data_save_path, stock + '.csv')
         df.to_csv(save_path, encoding="utf_8_sig")
