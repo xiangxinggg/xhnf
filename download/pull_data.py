@@ -18,6 +18,24 @@ def get_data(code = '000001', min = "5min", start = '20100101', end = '20200101'
     df = ts.get_hist_data(code, pause=3)
     return df
 
+def download_data(code, file_name):
+    try:
+        isExists=os.path.exists(file_name)
+        if not isExists:
+            print('start download:'+file_name)
+            df = get_data(code = stock)
+            if df.size == 18:
+                print(df)
+            else:
+                df.to_csv(file_name, encoding="utf_8_sig")
+            print('end downloaded:'+file_name+'\n')
+        else:
+            print('skip:'+file_name)
+    except Exception as e:
+        print(e)
+        print('code:'+code)
+
+
 if __name__ == "__main__":
     all_stock_list = get_all_stocks_index()
     now = datetime.datetime.now()
@@ -30,8 +48,7 @@ if __name__ == "__main__":
     for stock in all_stock_list[:]:
         i += 1
         print(i,'downloading ' + stock)
-        df = get_data(code = stock)
         save_path = os.path.join(data_save_path, stock + '.csv')
-        df.to_csv(save_path, encoding="utf_8_sig")
+        download_data(stock, save_path)
     os._exit(0)
 
