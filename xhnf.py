@@ -76,8 +76,8 @@ class XHNF (object):
               optimizer=keras.optimizers.Adadelta(),
               metrics=['accuracy'])
         filepath = self.getModelFileName()
-        checkpoint = ModelCheckpoint(filepath, monitor='val_loss' \
-                                     , save_weights_only=True,verbose=1,save_best_only=True, period=1)
+#         checkpoint = ModelCheckpoint(filepath, monitor='val_loss' \
+#                                      , save_weights_only=True,verbose=0,save_best_only=True, period=1)
         if os.path.exists(filepath):
             self.model.load_weights(filepath)
             print("checkpoint_loaded")
@@ -100,7 +100,7 @@ class XHNF (object):
         #y = np.concatenate((y, self.predict_data.y_train), axis=1)
         print(y)
         
-        score = self.model.evaluate(self.data.x_train, self.data.y_train, verbose=1)
+        score = self.model.evaluate(self.data.x_train, self.data.y_train, verbose=0)
         print('Test loss:', score[0])
         print('Test accuracy:', score[1])
 
