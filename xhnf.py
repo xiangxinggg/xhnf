@@ -75,8 +75,8 @@ class XHNF (object):
                     break
                 date_str = datetime.datetime.strftime(date, "%Y%m%d")
                 self.last_train_date = date_str
-                print('start training', self.last_train_date)
                 self.data = get_data(self.config.dataset, self.last_train_date)
+            print('start training', self.last_train_date)
             self.model.fit(self.data.x_train, self.data.y_train,
                   batch_size=self.config.batch_size,
                   epochs=self.config.epochs,
