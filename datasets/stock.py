@@ -41,10 +41,10 @@ def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
 	label_set = np.concatenate((label_set, lbl), axis=0)
 	return label_set
 
-def get_stock():
+def get_stock(last_train_date = '20160101'):
 	"""Retrieve the STOCK dataset and process the datasets."""
 	nb_classes = 2
-	last_train_date = '20160101'
+	#last_train_date = '20160101'
 	total_ahead_dates = 250
 	pre_dates = 3
 	path="data"+os.path.sep+"daily"

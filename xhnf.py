@@ -6,6 +6,7 @@ from models.model import get_model
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 import os
 import numpy as np
+import datetime
 # seed = 7
 # np.random.seed(seed)
 
@@ -15,6 +16,7 @@ class XHNF (object):
         self.data = None
         self.model = None
         self.predict_data = None
+        self.last_train_date = '20160101'
 
     def init_config(self):
 #         self.config = Configs(model='default', dataset='default', epochs=10, batch_size=128)
@@ -23,7 +25,7 @@ class XHNF (object):
         self.config = Configs(model='resnet', dataset='stock', epochs=10000, batch_size=128)
     
     def init_data(self):
-        self.data = get_data(self.config.dataset)
+        self.data = get_data(self.config.dataset, self.last_train_date)
 
     def init_predict_data(self):
         self.predict_data = get_predict_data(self.config.dataset)
@@ -62,15 +64,29 @@ class XHNF (object):
         if os.path.exists(filepath):
             self.model.load_weights(filepath)
             print("checkpoint_loaded")
-        self.model.fit(self.data.x_train, self.data.y_train,
+        for _ in range(10):
+            if self.data == None :
+                date = datetime.datetime.strptime(self.last_train_date, '%Y%m%d')
+                now = datetime.datetime.now()
+                if date < now :
+                    date = date+datetime.timedelta(days=365)
+                else:
+                    print('all done, last train date ', self.last_train_date)
+                    break
+                date_str = datetime.datetime.strftime(date, "%Y%m%d")
+                self.last_train_date = date_str
+                print('start training', self.last_train_date)
+                self.data = get_data(self.config.dataset, self.last_train_date)
+            self.model.fit(self.data.x_train, self.data.y_train,
                   batch_size=self.config.batch_size,
                   epochs=self.config.epochs,
                   verbose=1,
                   validation_data=(self.data.x_test, self.data.y_test),
                   callbacks=[checkpoint, earlyStopping])
-        score = self.model.evaluate(self.data.x_test, self.data.y_test, verbose=0)
-        print('Test loss:', score[0])
-        print('Test accuracy:', score[1])
+            score = self.model.evaluate(self.data.x_test, self.data.y_test, verbose=0)
+            print('Test loss:', score[0])
+            print('Test accuracy:', score[1])
+            self.data = None
 
     def test(self):
         self.model.compile(loss=keras.losses.categorical_crossentropy,

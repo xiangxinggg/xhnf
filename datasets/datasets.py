@@ -9,7 +9,7 @@ from datasets.cifar10 import get_cifar10
 from datasets.stock import get_stock, get_predict_stock, get_test_stock
 from entitys.entitys import Entitys
 
-def get_data( name):
+def get_data( name, last_train_date = '20160101'):
     entitys = None
     if name == 'mnist' or name == 'default':
         nb_classes, input_shape, x_train, \
@@ -21,7 +21,7 @@ def get_data( name):
         entitys = Entitys(input_shape, nb_classes, x_train, y_train, x_test, y_test)
     elif name == 'stock':
         nb_classes, input_shape, x_train, \
-            x_test, y_train, y_test = get_stock()
+            x_test, y_train, y_test = get_stock(last_train_date)
         entitys = Entitys(input_shape, nb_classes, x_train, y_train, x_test, y_test)
     
     return entitys
