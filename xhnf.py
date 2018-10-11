@@ -76,17 +76,10 @@ class XHNF (object):
               optimizer=keras.optimizers.Adadelta(),
               metrics=['accuracy'])
         filepath = self.getModelFileName()
-#         checkpoint = ModelCheckpoint(filepath, monitor='val_loss' \
-#                                      , save_weights_only=True,verbose=0,save_best_only=True, period=1)
+
         if os.path.exists(filepath):
             self.model.load_weights(filepath)
             print("checkpoint_loaded")
-#         self.model.fit(self.data.x_train, self.data.y_train,
-#                   batch_size=self.config.batch_size,
-#                   epochs=self.config.epochs,
-#                   verbose=1,
-#                   validation_data=(self.data.x_test, self.data.y_test),
-#                   callbacks=[checkpoint])
 
         y_predict = self.model.predict(self.data.x_train)
         y_res = y_predict[:,1]-y_predict[:,0]
@@ -100,7 +93,7 @@ class XHNF (object):
         #y = np.concatenate((y, self.predict_data.y_train), axis=1)
         print(y)
         
-        score = self.model.evaluate(self.data.x_train, self.data.y_train, verbose=0)
+        score = self.model.evaluate(self.data.x_train, self.data.y_train, verbose=1)
         print('Test loss:', score[0])
         print('Test accuracy:', score[1])
 
