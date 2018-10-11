@@ -16,7 +16,7 @@ class Loader (object):
     def __init__(self):
         pass
     
-    def load_csv(self, last_train_date, total_ahead_dates, fname \
+    def load_csv(self, last_train_date, total_ahead_dates, pre_dates, fname \
                  , col_start=1, row_start=1, delimiter=",", dtype=dtypes.float32):
         data = np.genfromtxt(fname, delimiter=delimiter, skip_header=row_start, dtype=str)
         #print('row shape:', data.shape)
@@ -35,11 +35,10 @@ class Loader (object):
           else:
               date = datetime.datetime.strptime(dateStr, '%Y%m%d')
         
-          if myDate > date and pliteIdx == -1:
+          if myDate >= date and pliteIdx == -1:
               pliteIdx = idx
-          # print("date:", date)
         if pliteIdx != -1:
-            ignore_start = pliteIdx - total_ahead_dates
+            ignore_start = pliteIdx
         
         if pliteIdx > 0:
           for _ in range(ignore_start):
@@ -112,7 +111,7 @@ class Loader (object):
           ii += 1
           print("index:", ii, "\t", dir_item_path)
           code = dir_item[:6]
-          data,date = self.load_csv(last_train_date, total_ahead_dates, dir_item_path)
+          data,date = self.load_csv(last_train_date, total_ahead_dates, pre_dates, dir_item_path)
           ss, ls, ps = self.process_data(data, date, code, pre_dates, moving_window, p_call, predict)
           if stocks_set is None:
               #print('ss.shape:', ss.shape)
