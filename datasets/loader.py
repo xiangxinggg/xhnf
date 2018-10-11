@@ -81,7 +81,7 @@ class Loader (object):
           if start < 0:
               start = 0
 
-          print('start:',start,'end',end)
+          #print('start:',start,'end',end)
           for idx in range(start, end):
               ss = np.expand_dims(data[range(idx, idx + (moving_window)), :], axis=0)
               stock_set = np.concatenate((stock_set, ss), axis=0)

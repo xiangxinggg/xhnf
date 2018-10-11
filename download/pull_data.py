@@ -39,8 +39,8 @@ def download_data(code, file_name):
 if __name__ == "__main__":
     all_stock_list = get_all_stocks_index()
     now = datetime.datetime.now()
-    datetime.datetime.strftime(now, "%Y%m%d")
-    data_save_path = "data/"+datetime.datetime.strftime(now, "%Y%m%d")+"/"
+    date_str = datetime.datetime.strftime(now, "%Y%m%d")
+    data_save_path = "data/"+date_str+"/"
     isExists=os.path.exists(data_save_path)
     if not isExists:
         os.makedirs(data_save_path)

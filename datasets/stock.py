@@ -9,7 +9,13 @@ from keras.layers import Conv2D, MaxPooling2D
 from utils.utils import reshape_with_channels
 import numpy as np
 import os
+import datetime
 from datasets.loader import load_stock, load_predict_stock, load_test_stock
+
+def get_date_str():
+    now = datetime.datetime.now()
+    date_str = datetime.datetime.strftime(now, "%Y%m%d")
+    return date_str
 
 # open, Hight, close, low . ^ or V
 def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
@@ -38,8 +44,8 @@ def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
 def get_stock():
 	"""Retrieve the STOCK dataset and process the datasets."""
 	nb_classes = 2
-	last_train_date = '20160711'
-	total_ahead_dates = 256
+	last_train_date = '20160101'
+	total_ahead_dates = 250
 	pre_dates = 3
 	path="data"+os.path.sep+"daily"
 
@@ -63,7 +69,9 @@ def get_stock():
 
 def get_predict_stock():
 	nb_classes = 2
-	last_train_date = '20180713'
+	#last_train_date = '20180713'
+	last_train_date = get_date_str()
+	print('predict date:',last_train_date)
 	total_ahead_dates = 132
 	pre_dates = 3
 	path="data"+os.path.sep+"daily"
@@ -88,7 +96,9 @@ def get_predict_stock():
 
 def get_test_stock():
 	nb_classes = 2
-	last_train_date = '20180713'
+	#last_train_date = '20180713'
+	last_train_date = get_date_str()
+	print('test date:',last_train_date)
 	total_ahead_dates = 133
 	pre_dates = 3
 	path="data"+os.path.sep+"daily"

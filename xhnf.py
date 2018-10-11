@@ -3,7 +3,7 @@ import keras
 from configs.configs import Configs
 from datasets.datasets import get_data, get_predict_data, get_test_data
 from models.model import get_model
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 import os
 import numpy as np
 # seed = 7
@@ -58,6 +58,7 @@ class XHNF (object):
         filepath = self.getModelFileName()
         checkpoint = ModelCheckpoint(filepath, monitor='val_loss' \
                                      , save_weights_only=True,verbose=1,save_best_only=True, period=1)
+        earlyStopping = EarlyStopping( monitor='val_loss', patience=20, verbose=0, mode='auto')
         if os.path.exists(filepath):
             self.model.load_weights(filepath)
             print("checkpoint_loaded")
@@ -66,7 +67,7 @@ class XHNF (object):
                   epochs=self.config.epochs,
                   verbose=1,
                   validation_data=(self.data.x_test, self.data.y_test),
-                  callbacks=[checkpoint])
+                  callbacks=[checkpoint, earlyStopping])
         score = self.model.evaluate(self.data.x_test, self.data.y_test, verbose=0)
         print('Test loss:', score[0])
         print('Test accuracy:', score[1])
