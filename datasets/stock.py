@@ -41,16 +41,16 @@ def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
 	label_set = np.concatenate((label_set, lbl), axis=0)
 	return label_set
 
-def get_stock(last_train_date = '20160101'):
+def get_stock(start_date = '20170101', end_date = '20180101'):
 	"""Retrieve the STOCK dataset and process the datasets."""
 	nb_classes = 2
-	#last_train_date = '20160101'
-	total_ahead_dates = 250
+#    start_date = '20170101'
+#    end_date = get_date_str()
 	pre_dates = 3
 	path="data"+os.path.sep+"daily"
 
 	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_stock(ohcl_callback, last_train_date, total_ahead_dates, pre_dates, path)
+	(x_train, y_train), (x_test, y_test) = load_stock(ohcl_callback, start_date, end_date, pre_dates, path)
 
 	(x_train, input_shape) = reshape_with_channels(x_train)
 	(x_test, _) = reshape_with_channels(x_test)
@@ -67,17 +67,17 @@ def get_stock(last_train_date = '20160101'):
 	
 	return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
 
-def get_predict_stock():
+def get_predict_stock(start_date = '20170101', end_date = '20180101'):
 	nb_classes = 2
-	#last_train_date = '20180713'
-	last_train_date = get_date_str()
-	print('predict date:',last_train_date)
+#     start_date = '20170101'
+#     end_date = get_date_str()
+	print('predict date:',end_date)
 	total_ahead_dates = 132
 	pre_dates = 3
 	path="data"+os.path.sep+"daily"
 
 	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_predict_stock(ohcl_callback, last_train_date, total_ahead_dates, pre_dates, path)
+	(x_train, y_train), (x_test, y_test) = load_predict_stock(ohcl_callback, start_date, end_date, pre_dates, path)
 
 	(x_train, input_shape) = reshape_with_channels(x_train)
 	(x_test, _) = reshape_with_channels(x_test)
@@ -94,17 +94,17 @@ def get_predict_stock():
 	
 	return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
 
-def get_test_stock():
+def get_test_stock(start_date = '20170101', end_date = '20180101'):
 	nb_classes = 2
-	#last_train_date = '20180713'
-	last_train_date = get_date_str()
-	print('test date:',last_train_date)
+#     start_date = '20170101'
+#     end_date = get_date_str()
+	print('test date:',end_date)
 	total_ahead_dates = 133
 	pre_dates = 3
 	path="data"+os.path.sep+"daily"
 
 	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_test_stock(ohcl_callback, last_train_date, total_ahead_dates, pre_dates, path)
+	(x_train, y_train), (x_test, y_test) = load_test_stock(ohcl_callback, start_date, end_date, pre_dates, path)
 
 	(x_train, input_shape) = reshape_with_channels(x_train)
 	(x_test, _) = reshape_with_channels(x_test)

@@ -16,7 +16,7 @@ class Loader (object):
     def __init__(self):
         pass
     
-    def load_csv(self, last_train_date, total_ahead_dates, pre_dates, fname \
+    def load_csv(self, fname, max_items, start_date='20170102', end_date='20180203', moving_window=128 \
                  , col_start=1, row_start=1, delimiter=",", dtype=dtypes.float32):
         data = np.genfromtxt(fname, delimiter=delimiter, skip_header=row_start, dtype=str)
         #print('row shape:', data.shape)
@@ -24,38 +24,40 @@ class Loader (object):
         #   for _ in range(row_start):
         #     data = np.delete(data, (0), axis=0)
         
-        myDate = datetime.datetime.strptime(last_train_date, '%Y%m%d')
-        
-        pliteIdx = -1
-        for idx in range(data.shape[0]):
+        start = datetime.datetime.strptime(start_date, '%Y%m%d')
+        end = datetime.datetime.strptime(end_date, '%Y%m%d')
+        for idx in range(data.shape[0]-1, -1, -1):
           dateStr = str(data[idx][0])
-        #     print('str:', dateStr)
+          #print('str:', dateStr)
           if dateStr.find('-') > 0 :
               date = datetime.datetime.strptime(dateStr, '%Y-%m-%d')
           else:
               date = datetime.datetime.strptime(dateStr, '%Y%m%d')
-        
-          if myDate >= date and pliteIdx == -1:
-              pliteIdx = idx
-        if pliteIdx != -1:
-            ignore_start = pliteIdx
-        
-        if pliteIdx > 0:
-          for _ in range(ignore_start):
-            data = np.delete(data, (0), axis=0)
-        l = data.shape[0]
-        if l > total_ahead_dates:
-          for _ in range(l, total_ahead_dates, -1):
-            data = np.delete(data, (total_ahead_dates), axis=0)
-        # print("now len:",l)
-        
-        #   print('**********reserve date*********')
-        #   for idx in range(data.shape[0]):
-        #     print(data[idx][0])
-        #   print('===================')
-        #   print('last_train_date:', last_train_date)
-        #   print('total_ahead_dates:', total_ahead_dates)
-        #   print('shape:', data.shape)
+          if date > end:
+              data = np.delete(data, (idx), axis=0)
+
+        ignore_end = -1
+        for idx in range(data.shape[0]):
+          dateStr = str(data[idx][0])
+          #print('str:', dateStr)
+          if dateStr.find('-') > 0 :
+              date = datetime.datetime.strptime(dateStr, '%Y-%m-%d')
+          else:
+              date = datetime.datetime.strptime(dateStr, '%Y%m%d')
+          if date < start:
+              ignore_end = idx + moving_window
+              break
+          
+        if ignore_end != -1:
+          l = data.shape[0]
+          for _ in range(ignore_end, l):
+              data = np.delete(data, (ignore_end), axis=0)
+
+        if max_items != 0:
+            l = data.shape[0]
+            for _ in range(l, max_items, -1):
+                data = np.delete(data, (max_items), axis=0)
+
         date = np.split(data, [1,data.shape[1]], axis=1)[0]
         for _ in range(col_start):
           data = np.delete(data, (0), axis=1)
@@ -99,19 +101,20 @@ class Loader (object):
           predict_set = np.concatenate((predict_set, dbl), axis=0)
       return stock_set, label_set, predict_set
 
-    def read_raw_data(self, p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, predict=False):
+    def read_raw_data(self, p_call, start_date, end_date, pre_dates, path, moving_window, predict=False, max_items=0):
       # read a directory of datasets
       stocks_set = None
       labels_set = np.zeros([0, 1])
       predict_set = np.zeros([0, 2])
       ii = 0
+#       max_items=moving_window+pre_dates+1
       for dir_item in os.listdir(path):
         dir_item_path = os.path.join(path, dir_item)
         if os.path.isfile(dir_item_path):
           ii += 1
           print("index:", ii, "\t", dir_item_path)
           code = dir_item[:6]
-          data,date = self.load_csv(last_train_date, total_ahead_dates, pre_dates, dir_item_path)
+          data,date = self.load_csv(dir_item_path, max_items, start_date, end_date, moving_window)
           ss, ls, ps = self.process_data(data, date, code, pre_dates, moving_window, p_call, predict)
           if stocks_set is None:
               #print('ss.shape:', ss.shape)
@@ -121,8 +124,8 @@ class Loader (object):
           predict_set = np.concatenate((predict_set, ps), axis=0)
       return (stocks_set, labels_set, predict_set)
 
-    def read_train_data(self, p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio):
-      (stocks_set, labels_set, _) = self.read_raw_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window)
+    def read_train_data(self, p_call, start_date, end_date, pre_dates, path, moving_window, train_test_ratio):
+      (stocks_set, labels_set, _) = self.read_raw_data(p_call, start_date, end_date, pre_dates, path, moving_window)
       
       # shuffling the datasets
       perm = np.arange(labels_set.shape[0])
@@ -148,8 +151,8 @@ class Loader (object):
       return (train_stocks, train_labels), (test_stocks, test_labels)
 
 
-    def read_predict_data(self, p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio):
-      (stocks_set, labels_set, predict_set) = self.read_raw_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, predict=True)
+    def read_predict_data(self, p_call, start_date, end_date, pre_dates, path, moving_window, train_test_ratio):
+      (stocks_set, labels_set, predict_set) = self.read_raw_data(p_call, start_date, end_date, pre_dates, path, moving_window, predict=True)
 
       # normalize the datasets
       stocks_set_ = np.zeros(stocks_set.shape)
@@ -163,8 +166,8 @@ class Loader (object):
       return (stocks_set, labels_set), (stocks_set, predict_set)
 
 
-    def read_test_data(self, p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio):
-      (stocks_set, labels_set, predict_set) = self.read_raw_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window)
+    def read_test_data(self, p_call, start_date, end_date, pre_dates, path, moving_window, train_test_ratio):
+      (stocks_set, labels_set, predict_set) = self.read_raw_data(p_call, start_date, end_date, pre_dates, path, moving_window)
 
       # normalize the datasets
       stocks_set_ = np.zeros(stocks_set.shape)
@@ -179,19 +182,19 @@ class Loader (object):
   
 
 # stock datasets loading
-def load_stock(p_call, last_train_date, total_ahead_dates=360, pre_dates=3, path="data" + os.path.sep + "daily" \
+def load_stock(p_call, start_date, end_date, pre_dates=3, path="data" + os.path.sep + "daily" \
                , moving_window=128, train_test_ratio=4.0):
     loader = Loader()
-    return loader.read_train_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio)
+    return loader.read_train_data(p_call, start_date, end_date, pre_dates, path, moving_window, train_test_ratio)
 
 
-def load_predict_stock(p_call, last_train_date, total_ahead_dates=360, pre_dates=3, path="data" + os.path.sep + "daily" \
+def load_predict_stock(p_call, start_date, end_date, pre_dates=3, path="data" + os.path.sep + "daily" \
                , moving_window=128, train_test_ratio=4.0):
     loader = Loader()
-    return loader.read_predict_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio)
+    return loader.read_predict_data(p_call, start_date, end_date, pre_dates, path, moving_window, train_test_ratio)
 
 
-def load_test_stock(p_call, last_train_date, total_ahead_dates=360, pre_dates=3, path="data" + os.path.sep + "daily" \
+def load_test_stock(p_call, start_date, end_date, pre_dates=3, path="data" + os.path.sep + "daily" \
                , moving_window=128, train_test_ratio=4.0):
     loader = Loader()
-    return loader.read_test_data(p_call, last_train_date, total_ahead_dates, pre_dates, path, moving_window, train_test_ratio)
+    return loader.read_test_data(p_call, start_date, end_date, pre_dates, path, moving_window, train_test_ratio)

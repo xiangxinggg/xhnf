@@ -16,7 +16,8 @@ class XHNF (object):
         self.data = None
         self.model = None
         self.predict_data = None
-        self.last_train_date = '20160101'
+        self.start_date = '20140101'
+        self.end_date = '20180101'
 
     def init_config(self):
 #         self.config = Configs(model='default', dataset='default', epochs=10, batch_size=128)
@@ -25,7 +26,7 @@ class XHNF (object):
         self.config = Configs(model='resnet', dataset='stock', epochs=10000, batch_size=128)
     
     def init_data(self):
-        self.data = get_data(self.config.dataset, self.last_train_date)
+        self.data = get_data(self.config.dataset, self.start_date, self.end_date)
 
     def init_predict_data(self):
         self.predict_data = get_predict_data(self.config.dataset)
@@ -66,17 +67,18 @@ class XHNF (object):
             print("checkpoint_loaded")
         for _ in range(10):
             if self.data == None :
-                date = datetime.datetime.strptime(self.last_train_date, '%Y%m%d')
+                end = datetime.datetime.strptime(self.end_date, '%Y%m%d')
                 now = datetime.datetime.now()
-                if date < now :
-                    date = date+datetime.timedelta(days=365)
+                if end < now :
+                    end = end+datetime.timedelta(days=365)
                 else:
-                    print('all done, last train date ', self.last_train_date)
+                    print('all done, last train date ', self.end_date)
                     break
-                date_str = datetime.datetime.strftime(date, "%Y%m%d")
-                self.last_train_date = date_str
-                self.data = get_data(self.config.dataset, self.last_train_date)
-            print('start training', self.last_train_date)
+                end_date_str = datetime.datetime.strftime(end, "%Y%m%d")
+                self.start_date = self.end_date
+                self.end_date = end_date_str
+                self.data = get_data(self.config.dataset, self.start_date, self.end_date)
+            print('start training', self.end_date)
             self.model.fit(self.data.x_train, self.data.y_train,
                   batch_size=self.config.batch_size,
                   epochs=self.config.epochs,
