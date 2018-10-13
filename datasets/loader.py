@@ -120,7 +120,7 @@ class Loader (object):
           #print("index:", ii, "\t", dir_item_path)
           code = dir_item[:6]
           done = int(ii*50/total)
-          sys.stdout.write("\r[%s%s] %d/%d,code:%s" % ('#' * done, ' ' * (50 - done),ii,total, code))
+          sys.stdout.write("\r[%s%s] %d/%d,code:%s\r\n" % ('#' * done, ' ' * (50 - done),ii,total, code))
           sys.stdout.flush()
           data,date = self.load_csv(dir_item_path, max_items, start_date, end_date, moving_window)
           ss, ls, ps = self.process_data(data, date, code, pre_dates, moving_window, p_call, predict)
@@ -132,6 +132,17 @@ class Loader (object):
           predict_set = np.concatenate((predict_set, ps), axis=0)
       return (stocks_set, labels_set, predict_set)
 
+    def normalize_datasets(self, stocks_set):
+      # normalize the datasets
+      stocks_set_ = np.zeros(stocks_set.shape)
+      for i in range(len(stocks_set)):
+        min = stocks_set[i].min(axis=0)
+        max = stocks_set[i].max(axis=0)
+        stocks_set_[i] = (stocks_set[i] - min) / (max - min)
+      stocks_set = stocks_set_
+      # labels_set = np.transpose(labels_set)
+      return stocks_set
+
     def read_train_data(self, p_call, start_date, end_date, pre_dates, path, moving_window, train_test_ratio):
       (stocks_set, labels_set, _) = self.read_raw_data(p_call, start_date, end_date, pre_dates, path, moving_window)
       
@@ -141,14 +152,7 @@ class Loader (object):
       stocks_set = stocks_set[perm]
       labels_set = labels_set[perm]
     
-      # normalize the datasets
-      stocks_set_ = np.zeros(stocks_set.shape)
-      for i in range(len(stocks_set)):
-        min = stocks_set[i].min(axis=0)
-        max = stocks_set[i].max(axis=0)
-        stocks_set_[i] = (stocks_set[i] - min) / (max - min)
-      stocks_set = stocks_set_
-      # labels_set = np.transpose(labels_set)
+      stocks_set = self.normalize_datasets(stocks_set)
     
       # selecting 1/5 for testing, and 4/5 for training
       train_test_idx = int((1.0 / (train_test_ratio + 1.0)) * labels_set.shape[0])
@@ -162,14 +166,7 @@ class Loader (object):
     def read_predict_data(self, p_call, start_date, end_date, pre_dates, path, moving_window, train_test_ratio):
       (stocks_set, labels_set, predict_set) = self.read_raw_data(p_call, start_date, end_date, pre_dates, path, moving_window, predict=True)
 
-      # normalize the datasets
-      stocks_set_ = np.zeros(stocks_set.shape)
-      for i in range(len(stocks_set)):
-        min = stocks_set[i].min(axis=0)
-        max = stocks_set[i].max(axis=0)
-        stocks_set_[i] = (stocks_set[i] - min) / (max - min)
-      stocks_set = stocks_set_
-      # labels_set = np.transpose(labels_set)
+      stocks_set = self.normalize_datasets(stocks_set)
 
       return (stocks_set, labels_set), (stocks_set, predict_set)
 
@@ -177,14 +174,7 @@ class Loader (object):
     def read_test_data(self, p_call, start_date, end_date, pre_dates, path, moving_window, train_test_ratio):
       (stocks_set, labels_set, predict_set) = self.read_raw_data(p_call, start_date, end_date, pre_dates, path, moving_window)
 
-      # normalize the datasets
-      stocks_set_ = np.zeros(stocks_set.shape)
-      for i in range(len(stocks_set)):
-        min = stocks_set[i].min(axis=0)
-        max = stocks_set[i].max(axis=0)
-        stocks_set_[i] = (stocks_set[i] - min) / (max - min)
-      stocks_set = stocks_set_
-      # labels_set = np.transpose(labels_set)
+      stocks_set = self.normalize_datasets(stocks_set)
 
       return (stocks_set, labels_set), (stocks_set, predict_set)
   
