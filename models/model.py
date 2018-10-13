@@ -11,6 +11,7 @@ from keras.models import Sequential
 from keras.models import Model
 from keras.layers.convolutional import Conv2D,MaxPooling2D
 from models.resnet import get_resnet_model
+import models.resnet2 as resnet2
 import numpy as np
 
 def get_default_model(input_shape, nb_classes):
@@ -33,4 +34,6 @@ def get_model( name, input_shape, nb_classes):
         model = get_default_model(input_shape, nb_classes)
     elif name == 'resnet':
         model = get_resnet_model(input_shape, nb_classes)
+    elif name == 'resnet2':
+        model = resnet2.ResnetBuilder.build_resnet_18(input_shape, nb_classes)
     return model
