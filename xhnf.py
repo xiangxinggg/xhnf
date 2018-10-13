@@ -15,7 +15,6 @@ class XHNF (object):
         self.config = None
         self.data = None
         self.model = None
-        self.predict_data = None
         self.start_date = '20140101'
         self.end_date = '20160501'
 
@@ -29,12 +28,10 @@ class XHNF (object):
         self.data = get_data(self.config.dataset, self.start_date, self.end_date)
 
     def init_predict_data(self):
-        self.predict_data = get_predict_data(self.config.dataset)
-        self.data = self.predict_data
+        self.data = get_predict_data(self.config.dataset)
 
     def init_test_data(self):
-        self.predict_data = get_test_data(self.config.dataset)
-        self.data = self.predict_data
+        self.data = get_test_data(self.config.dataset)
 
     def init_model(self):
         self.model = get_model(self.config.model, self.data.input_shape, self.data.nb_classes)
@@ -113,9 +110,7 @@ class XHNF (object):
         yt = np.delete(self.data.y_train, (0), axis=1)
 
         y = np.concatenate((self.data.y_test, y_res), axis=1)
-        #y = np.concatenate((y, y_predict), axis=1)
         y = np.concatenate((y, yt), axis=1)
-        #y = np.concatenate((y, self.predict_data.y_train), axis=1)
         print(y)
         
         score = self.model.evaluate(self.data.x_train, self.data.y_train, verbose=1)
@@ -142,16 +137,14 @@ class XHNF (object):
         if os.path.exists(filepath):
             self.model.load_weights(filepath)
             print("checkpoint_loaded")
-        y_predict = self.model.predict(self.predict_data.x_train)
+        y_predict = self.model.predict(self.data.x_train)
         y_res = y_predict[:,1]-y_predict[:,0]
         y_res = y_res.reshape(y_res.shape[0],1)
 
-        yt = np.delete(self.predict_data.y_train, (0), axis=1)
+        yt = np.delete(self.data.y_train, (0), axis=1)
 
-        y = np.concatenate((self.predict_data.y_test, y_res), axis=1)
-        #y = np.concatenate((y, y_predict), axis=1)
+        y = np.concatenate((self.data.y_test, y_res), axis=1)
         y = np.concatenate((y, yt), axis=1)
-        #y = np.concatenate((y, self.predict_data.y_train), axis=1)
         print(y)
 
     def do_train(self):
