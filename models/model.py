@@ -34,6 +34,8 @@ def get_model( name, input_shape, nb_classes):
         model = get_default_model(input_shape, nb_classes)
     elif name == 'resnet':
         model = get_resnet_model(input_shape, nb_classes)
-    elif name == 'resnet2':
+    elif name == 'resnet18':
         model = resnet2.ResnetBuilder.build_resnet_18(input_shape, nb_classes)
+    elif name == 'resnet152':
+        model = resnet2.ResnetBuilder.build_resnet_152(input_shape, nb_classes)
     return model
