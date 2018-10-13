@@ -1,6 +1,7 @@
 eclipse.preferences.version=1
 encoding//configs/configs.py=utf-8
 encoding//datasets/datasets.py=utf-8
+encoding//datasets/loader.py=utf-8
 encoding//datasets/stock.py=utf-8
 encoding//download/pull_data.py=utf-8
 encoding//models/model.py=utf-8

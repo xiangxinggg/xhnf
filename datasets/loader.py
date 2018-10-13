@@ -1,3 +1,4 @@
+# --*-- coding:utf-8 --*--
 import tensorflow as tf
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import random_seed
@@ -9,6 +10,8 @@ import functools as ft
 import csv
 import os
 import datetime
+import time
+import sys
 np.set_printoptions(threshold=np.nan)
 
 
@@ -107,13 +110,18 @@ class Loader (object):
       labels_set = np.zeros([0, 1])
       predict_set = np.zeros([0, 2])
       ii = 0
+      files = os.listdir(path)
+      total = len(files)
 #       max_items=moving_window+pre_dates+1
-      for dir_item in os.listdir(path):
+      for dir_item in files:
         dir_item_path = os.path.join(path, dir_item)
         if os.path.isfile(dir_item_path):
           ii += 1
           #print("index:", ii, "\t", dir_item_path)
           code = dir_item[:6]
+          done = int(ii*50/total)
+          sys.stdout.write("\r[%s%s] %d/%d,code:%s" % ('#' * done, ' ' * (50 - done),ii,total, code))
+          sys.stdout.flush()
           data,date = self.load_csv(dir_item_path, max_items, start_date, end_date, moving_window)
           ss, ls, ps = self.process_data(data, date, code, pre_dates, moving_window, p_call, predict)
           if stocks_set is None:
