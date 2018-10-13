@@ -64,18 +64,18 @@ class XHNF (object):
         earlyStopping = EarlyStopping( monitor='val_loss', patience=100, verbose=0, mode='auto')
         if os.path.exists(filepath):
             self.model.load_weights(filepath)
-            print("1 checkpoint_loaded")
-        for _ in range(10000):
-            print('start training', self.end_date)
-            self.model.fit(self.data.x_train, self.data.y_train,
-                  batch_size=self.config.batch_size,
-                  epochs=self.config.epochs,
-                  verbose=1,
-                  validation_data=(self.data.x_test, self.data.y_test),
-                  callbacks=[checkpoint, earlyStopping])
-            score = self.model.evaluate(self.data.x_test, self.data.y_test, verbose=0)
-            print('Test loss:', score[0])
-            print('Test accuracy:', score[1])
+            print("checkpoint_loaded")
+
+        print('start training', self.end_date)
+        self.model.fit(self.data.x_train, self.data.y_train,
+              batch_size=self.config.batch_size,
+              epochs=self.config.epochs,
+              verbose=1,
+              validation_data=(self.data.x_test, self.data.y_test),
+              callbacks=[checkpoint, earlyStopping])
+        score = self.model.evaluate(self.data.x_test, self.data.y_test, verbose=0)
+        print('Test loss:', score[0])
+        print('Test accuracy:', score[1])
 
     def train(self):
         for i in range(1000):
