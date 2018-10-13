@@ -112,7 +112,7 @@ class Loader (object):
         dir_item_path = os.path.join(path, dir_item)
         if os.path.isfile(dir_item_path):
           ii += 1
-          print("index:", ii, "\t", dir_item_path)
+          #print("index:", ii, "\t", dir_item_path)
           code = dir_item[:6]
           data,date = self.load_csv(dir_item_path, max_items, start_date, end_date, moving_window)
           ss, ls, ps = self.process_data(data, date, code, pre_dates, moving_window, p_call, predict)
