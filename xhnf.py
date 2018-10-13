@@ -17,7 +17,7 @@ class XHNF (object):
         self.model = None
         self.predict_data = None
         self.start_date = '20140101'
-        self.end_date = '20161001'
+        self.end_date = '20160501'
 
     def init_config(self):
 #         self.config = Configs(model='default', dataset='default', epochs=10, batch_size=128)
@@ -64,7 +64,7 @@ class XHNF (object):
         earlyStopping = EarlyStopping( monitor='val_loss', patience=100, verbose=0, mode='auto')
         if os.path.exists(filepath):
             self.model.load_weights(filepath)
-            print("checkpoint_loaded")
+            print("1 checkpoint_loaded")
         for _ in range(10000):
             if self.data == None :
                 end = datetime.datetime.strptime(self.end_date, '%Y%m%d')
@@ -78,6 +78,9 @@ class XHNF (object):
                 self.start_date = self.end_date
                 self.end_date = end_date_str
                 self.data = get_data(self.config.dataset, self.start_date, self.end_date)
+                if os.path.exists(filepath):
+                    self.model.load_weights(filepath)
+                    print("2 checkpoint_loaded")
             print('start training', self.end_date)
             self.model.fit(self.data.x_train, self.data.y_train,
                   batch_size=self.config.batch_size,
