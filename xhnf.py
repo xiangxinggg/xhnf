@@ -66,6 +66,20 @@ class XHNF (object):
             self.model.load_weights(filepath)
             print("1 checkpoint_loaded")
         for _ in range(10000):
+            print('start training', self.end_date)
+            self.model.fit(self.data.x_train, self.data.y_train,
+                  batch_size=self.config.batch_size,
+                  epochs=self.config.epochs,
+                  verbose=1,
+                  validation_data=(self.data.x_test, self.data.y_test),
+                  callbacks=[checkpoint, earlyStopping])
+            score = self.model.evaluate(self.data.x_test, self.data.y_test, verbose=0)
+            print('Test loss:', score[0])
+            print('Test accuracy:', score[1])
+
+    def train(self):
+        for i in range(1000):
+            print('train run', i)
             if self.data == None :
                 end = datetime.datetime.strptime(self.end_date, '%Y%m%d')
                 now = datetime.datetime.now()
@@ -78,19 +92,8 @@ class XHNF (object):
                 self.start_date = self.end_date
                 self.end_date = end_date_str
                 self.data = get_data(self.config.dataset, self.start_date, self.end_date)
-                if os.path.exists(filepath):
-                    self.model.load_weights(filepath)
-                    print("2 checkpoint_loaded")
-            print('start training', self.end_date)
-            self.model.fit(self.data.x_train, self.data.y_train,
-                  batch_size=self.config.batch_size,
-                  epochs=self.config.epochs,
-                  verbose=1,
-                  validation_data=(self.data.x_test, self.data.y_test),
-                  callbacks=[checkpoint, earlyStopping])
-            score = self.model.evaluate(self.data.x_test, self.data.y_test, verbose=0)
-            print('Test loss:', score[0])
-            print('Test accuracy:', score[1])
+
+            self.train_network()
             self.data = None
 
     def test(self):
@@ -153,12 +156,12 @@ class XHNF (object):
 
     def do_train(self):
         self.init()
-        self.train_network()
+        self.train()
 
     def do_test(self):
         self.init_test()
         self.test()
-    
+
 def main():
     print("Start XHNF.")
     xhnf = XHNF()
