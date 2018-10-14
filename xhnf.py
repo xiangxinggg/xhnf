@@ -89,8 +89,11 @@ class XHNF (object):
                 self.start_date = self.end_date
                 self.end_date = end_date_str
                 self.data = get_data(self.config.dataset, self.start_date, self.end_date)
+                del self.model
+                self.init_model()
 
             self.train_network()
+            del self.data
             self.data = None
 
     def test(self):
