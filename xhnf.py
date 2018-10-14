@@ -30,14 +30,14 @@ class XHNF (object):
     def init_predict_data(self):
         now = datetime.datetime.now()
         end_date = datetime.datetime.strftime(now, "%Y%m%d")
-        start = now+datetime.timedelta(days=-5)
+        start = now+datetime.timedelta(days=-132)
         start_date = datetime.datetime.strftime(start, "%Y%m%d")
         self.data = get_predict_data(self.config.dataset, start_date, end_date)
 
     def init_test_data(self):
         now = datetime.datetime.now()
         end_date = datetime.datetime.strftime(now, "%Y%m%d")
-        start = now+datetime.timedelta(days=-5)
+        start = now+datetime.timedelta(days=-132)
         start_date = datetime.datetime.strftime(start, "%Y%m%d")
         self.data = get_test_data(self.config.dataset, start_date, end_date)
 
