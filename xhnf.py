@@ -16,7 +16,7 @@ class XHNF (object):
         self.data = None
         self.model = None
         self.start_date = '20140101'
-        self.end_date = '20160501'
+        self.end_date = '20170801'
 
     def init_config(self):
 #         self.config = Configs(model='default', dataset='default', epochs=10, batch_size=128)
