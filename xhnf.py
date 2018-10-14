@@ -28,10 +28,18 @@ class XHNF (object):
         self.data = get_data(self.config.dataset, self.start_date, self.end_date)
 
     def init_predict_data(self):
-        self.data = get_predict_data(self.config.dataset)
+        now = datetime.datetime.now()
+        end_date = datetime.datetime.strftime(now, "%Y%m%d")
+        start = now+datetime.timedelta(days=-5)
+        start_date = datetime.datetime.strftime(start, "%Y%m%d")
+        self.data = get_predict_data(self.config.dataset, start_date, end_date)
 
     def init_test_data(self):
-        self.data = get_test_data(self.config.dataset)
+        now = datetime.datetime.now()
+        end_date = datetime.datetime.strftime(now, "%Y%m%d")
+        start = now+datetime.timedelta(days=-5)
+        start_date = datetime.datetime.strftime(start, "%Y%m%d")
+        self.data = get_test_data(self.config.dataset, start_date, end_date)
 
     def init_model(self):
         self.model = get_model(self.config.model, self.data.input_shape, self.data.nb_classes)

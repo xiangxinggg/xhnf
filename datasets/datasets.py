@@ -27,7 +27,7 @@ def get_data( name, start_date, end_date):
     return entitys
 
 
-def get_predict_data( name):
+def get_predict_data( name, start_date, end_date):
     entitys = None
     if name == 'mnist' or name == 'default':
         pass
@@ -35,13 +35,13 @@ def get_predict_data( name):
         pass
     elif name == 'stock':
         nb_classes, input_shape, x_train, \
-            x_test, y_train, y_test = get_predict_stock()
+            x_test, y_train, y_test = get_predict_stock(start_date, end_date)
         entitys = Entitys(input_shape, nb_classes, x_train, y_train, x_test, y_test)
     
     return entitys
 
 
-def get_test_data( name):
+def get_test_data( name, start_date, end_date):
     entitys = None
     if name == 'mnist' or name == 'default':
         pass
@@ -49,7 +49,7 @@ def get_test_data( name):
         pass
     elif name == 'stock':
         nb_classes, input_shape, x_train, \
-            x_test, y_train, y_test = get_test_stock()
+            x_test, y_train, y_test = get_test_stock(start_date, end_date)
         entitys = Entitys(input_shape, nb_classes, x_train, y_train, x_test, y_test)
     
     return entitys
