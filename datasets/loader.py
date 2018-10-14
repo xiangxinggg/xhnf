@@ -120,7 +120,7 @@ class Loader (object):
           #print("index:", ii, "\t", dir_item_path)
           code = dir_item[:6]
           done = int(ii*50/total)
-          sys.stdout.write("\r[%s%s] %d/%d,code:%s\r\n" % ('#' * done, ' ' * (50 - done),ii,total, code))
+          sys.stdout.write("\r[%s%s] %d/%d,code:%s\r" % ('#' * done, ' ' * (50 - done),ii,total, code))
           sys.stdout.flush()
           data,date = self.load_csv(dir_item_path, max_items, start_date, end_date, moving_window)
           ss, ls, ps = self.process_data(data, date, code, pre_dates, moving_window, p_call, predict)
