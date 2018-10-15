@@ -8,7 +8,7 @@ def main():
     print("Start XHNF Train.")
     xhnf = XHNF()
     xhnf.do_test()
-    print("XHNF Train Done.")
+    print("XHNF Check Done.")
 
 if __name__ == '__main__':
     main()

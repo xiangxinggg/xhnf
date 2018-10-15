@@ -30,14 +30,14 @@ class XHNF (object):
     def init_predict_data(self):
         now = datetime.datetime.now()
         end_date = datetime.datetime.strftime(now, "%Y%m%d")
-        start = now+datetime.timedelta(days=-132)
+        start = now+datetime.timedelta(days=-5)
         start_date = datetime.datetime.strftime(start, "%Y%m%d")
         self.data = get_predict_data(self.config.dataset, start_date, end_date)
 
     def init_test_data(self):
         now = datetime.datetime.now()
         end_date = datetime.datetime.strftime(now, "%Y%m%d")
-        start = now+datetime.timedelta(days=-132)
+        start = now+datetime.timedelta(days=-10)
         start_date = datetime.datetime.strftime(start, "%Y%m%d")
         self.data = get_test_data(self.config.dataset, start_date, end_date)
 
@@ -114,6 +114,11 @@ class XHNF (object):
             self.model.load_weights(filepath)
             print("checkpoint_loaded")
 
+        if self.data.x_train.shape[0] <= 0 :
+            print("train shape:", self.data.x_train.shape)
+            print("do not read any test date, so just exit.")
+            return
+
         y_predict = self.model.predict(self.data.x_train)
         y_res = y_predict[:,1]-y_predict[:,0]
         y_res = y_res.reshape(y_res.shape[0],1)
@@ -148,6 +153,11 @@ class XHNF (object):
         if os.path.exists(filepath):
             self.model.load_weights(filepath)
             print("checkpoint_loaded")
+
+        if self.data.x_train.shape[0] <= 0 :
+            print("train shape:", self.data.x_train.shape)
+            print("do not read any predict date, so just exit.")
+            return
         y_predict = self.model.predict(self.data.x_train)
         y_res = y_predict[:,1]-y_predict[:,0]
         y_res = y_res.reshape(y_res.shape[0],1)
