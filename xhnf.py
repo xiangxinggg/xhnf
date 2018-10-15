@@ -43,6 +43,9 @@ class XHNF (object):
 
     def init_model(self):
         self.model = get_model(self.config.model, self.data.input_shape, self.data.nb_classes)
+        self.model.compile(loss=keras.losses.categorical_crossentropy,
+              optimizer=keras.optimizers.Adadelta(),
+              metrics=['accuracy'])
 
     def init(self):
         self.init_config()
@@ -60,9 +63,9 @@ class XHNF (object):
         self.init_model()
         
     def train_network(self):
-        self.model.compile(loss=keras.losses.categorical_crossentropy,
-              optimizer=keras.optimizers.Adadelta(),
-              metrics=['accuracy'])
+#         self.model.compile(loss=keras.losses.categorical_crossentropy,
+#               optimizer=keras.optimizers.Adadelta(),
+#               metrics=['accuracy'])
         filepath = self.getModelFileName()
         checkpoint = ModelCheckpoint(filepath, monitor='val_loss' \
                                      , save_weights_only=True,verbose=1,save_best_only=True, period=1)
@@ -106,17 +109,17 @@ class XHNF (object):
                     self.start_date = self.end_date
                 self.end_date = end_date_str
                 self.data = get_data(self.config.dataset, self.start_date, self.end_date)
-                del self.model
-                self.init_model()
+#                 del self.model
+#                 self.init_model()
 
             train_status = self.train_network()
             del self.data
             self.data = None
 
     def test(self):
-        self.model.compile(loss=keras.losses.categorical_crossentropy,
-              optimizer=keras.optimizers.Adadelta(),
-              metrics=['accuracy'])
+#         self.model.compile(loss=keras.losses.categorical_crossentropy,
+#               optimizer=keras.optimizers.Adadelta(),
+#               metrics=['accuracy'])
         filepath = self.getModelFileName()
 
         if os.path.exists(filepath):
@@ -155,9 +158,9 @@ class XHNF (object):
     def do_predict(self):
         print('do predict.')
         self.init_predict()
-        self.model.compile(loss=keras.losses.categorical_crossentropy,
-              optimizer=keras.optimizers.Adadelta(),
-              metrics=['accuracy'])
+#         self.model.compile(loss=keras.losses.categorical_crossentropy,
+#               optimizer=keras.optimizers.Adadelta(),
+#               metrics=['accuracy'])
         filepath = self.getModelFileName()
         if os.path.exists(filepath):
             self.model.load_weights(filepath)
