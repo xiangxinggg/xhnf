@@ -16,7 +16,7 @@ class XHNF (object):
         self.data = None
         self.model = None
         self.start_date = '20140101'
-        self.end_date = '20170801'
+        self.end_date = '20160501'
 
     def init_config(self):
 #         self.config = Configs(model='default', dataset='default', epochs=10, batch_size=128)
@@ -71,7 +71,13 @@ class XHNF (object):
             self.model.load_weights(filepath)
             print("checkpoint_loaded")
 
-        print('start training', self.end_date)
+        print('start training, start:', self.start_date, '; end:', self.end_date)
+
+        if self.data.x_train.shape[0] <= 0 :
+            print("train shape:", self.data.x_train.shape)
+            print("do not read any train date, so just next loop.")
+            return False
+
         self.model.fit(self.data.x_train, self.data.y_train,
               batch_size=self.config.batch_size,
               epochs=self.config.epochs,
@@ -81,8 +87,10 @@ class XHNF (object):
         score = self.model.evaluate(self.data.x_test, self.data.y_test, verbose=0)
         print('Test loss:', score[0])
         print('Test accuracy:', score[1])
+        return True
 
     def train(self):
+        train_status = True
         for i in range(1000):
             print('train run', i)
             if self.data == None :
@@ -94,13 +102,14 @@ class XHNF (object):
                     print('all done, last train date ', self.end_date)
                     break
                 end_date_str = datetime.datetime.strftime(end, "%Y%m%d")
-                self.start_date = self.end_date
+                if train_status == True:
+                    self.start_date = self.end_date
                 self.end_date = end_date_str
                 self.data = get_data(self.config.dataset, self.start_date, self.end_date)
                 del self.model
                 self.init_model()
 
-            self.train_network()
+            train_status = self.train_network()
             del self.data
             self.data = None
 
