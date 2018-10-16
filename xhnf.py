@@ -69,7 +69,7 @@ class XHNF (object):
         filepath = self.getModelFileName()
         checkpoint = ModelCheckpoint(filepath, monitor='val_loss' \
                                      , save_weights_only=True,verbose=1,save_best_only=True, period=1)
-        earlyStopping = EarlyStopping( monitor='val_loss', patience=15, verbose=0, mode='auto')
+        earlyStopping = EarlyStopping( monitor='val_loss', patience=6, verbose=0, mode='auto')
         if os.path.exists(filepath):
             self.model.load_weights(filepath)
             print("checkpoint_loaded")
