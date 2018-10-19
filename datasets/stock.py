@@ -32,12 +32,6 @@ def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
 		lbl = [[1.0]]
 	else:
 		lbl = [[0.0]]
-# 	if data[idx+(moving_window+pre_dates),0] > data[idx+(moving_window),0]:
-# 	  lbl = [[1.0]]
-# 	  print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'up')
-# 	else:
-# 	  lbl = [[0.0]]
-# 	  print(data[idx+(moving_window+pre_dates),0],data[idx+(moving_window),0],'down')
 	label_set = np.concatenate((label_set, lbl), axis=0)
 	return label_set
 
