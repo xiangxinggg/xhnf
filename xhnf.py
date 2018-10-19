@@ -149,8 +149,12 @@ class XHNF (object):
         records_dir = 'records' \
             + os.path.sep + self.config.get_model() \
             + os.path.sep + self.config.get_dataset()
+        weight_name = "Weight_C"+str(self.data.nb_classes)
+        weight_name = weight_name+"_I"+str(self.data.input_shape[0])+"_"+str(self.data.input_shape[1])+"_"+str(self.data.input_shape[2])
+        weight_name = weight_name+".h5"
         file_name = records_dir \
-            + os.path.sep + 'model.h5'
+            + os.path.sep + weight_name
+        #print("input_shape",str(self.data.input_shape), "nb_classes", str(self.data.nb_classes))
         if os.path.exists(records_dir) == False:
             os.makedirs(records_dir)
         return file_name

@@ -12,6 +12,12 @@ import os
 import datetime
 from datasets.loader import load_stock, load_predict_stock, load_test_stock
 
+def get_nb_classes():
+    return 4
+
+def get_pre_dates():
+    return 3
+
 def get_date_str():
     now = datetime.datetime.now()
     date_str = datetime.datetime.strftime(now, "%Y%m%d")
@@ -19,25 +25,44 @@ def get_date_str():
 
 # open, Hight, close, low . ^ or V
 def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
-# 	print('ohcl_callback')
-	start = idx+moving_window+1
-	end = start+pre_dates-1
-	sum = 0
-	for i in range(start, end):
-		for n in range(4):
-			sum += data[i+1,n]-data[i,n]
-			#print('i',i,'n',n,'+1',data[i+1,n], '0', data[i,n])
-# 	print('sum', sum)
-	if sum > 0 :
-		lbl = [[1.0]]
-	else:
-		lbl = [[0.0]]
-	label_set = np.concatenate((label_set, lbl), axis=0)
-	return label_set
+    start = idx+moving_window+1
+    end = start+pre_dates-1
+    total = 0
+    for i in range(start, end):
+        for n in range(4):
+            total += data[i+1,n]-data[i,n]
+            #print('i',i,'n',n,'+1',data[i+1,n], '0', data[i,n])
+
+    per = (total/data[start, 0])*100/4
+    #print("total", total, "per", per)
+
+    nb_classes = get_nb_classes()
+    if nb_classes == 2 :
+        if per > 0 :
+            lbl = [[1.0]]
+        else:
+            lbl = [[0.0]]
+    elif nb_classes == 4 :
+        if per >= 1 :
+            lbl = [[2.0]]
+        elif per >= 0 and per < 1:
+            lbl = [[1.0]]
+        elif per >= -1 and per < 0:
+            lbl = [[-1.0]]
+        else:
+            lbl = [[-2.0]]
+    else :
+        if per > 0 :
+            lbl = [[1.0]]
+        else:
+            lbl = [[0.0]]
+
+    label_set = np.concatenate((label_set, lbl), axis=0)
+    return label_set
 
 def read_date_config():
-    nb_classes = 2
-    pre_dates = 3
+    nb_classes = get_nb_classes()
+    pre_dates = get_pre_dates()
     return nb_classes, pre_dates, ohcl_callback
 
 def get_stock(start_date = '20170101', end_date = '20180101'):
