@@ -35,83 +35,54 @@ def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
 	label_set = np.concatenate((label_set, lbl), axis=0)
 	return label_set
 
+def read_date_config():
+    nb_classes = 2
+    pre_dates = 3
+    return nb_classes, pre_dates, ohcl_callback
+
 def get_stock(start_date = '20170101', end_date = '20180101'):
 	"""Retrieve the STOCK dataset and process the datasets."""
-	nb_classes = 2
-#    start_date = '20170101'
-#    end_date = get_date_str()
-	pre_dates = 3
+	nb_classes, pre_dates, fun_callbak = read_date_config()
 	path="data"+os.path.sep+"daily"
 
 	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_stock(ohcl_callback, start_date, end_date, pre_dates, path)
+	(x_train, y_train), (x_test, y_test) = load_stock(fun_callbak, start_date, end_date, pre_dates, path)
 
 	(x_train, input_shape) = reshape_with_channels(x_train)
 	(x_test, _) = reshape_with_channels(x_test)
-	
-# 	x_train = x_train.astype('float32')
-# 	x_test = x_test.astype('float32')
-# 	x_train /= 255
-# 	x_test /= 255
-# 	print("*********** y_test:", y_test)
-	# convert class vectors to binary class matrices
+
 	y_train = keras.utils.to_categorical(y_train, nb_classes)
 	y_test = keras.utils.to_categorical(y_test, nb_classes)
-# 	print("######## y_test:", y_test)
 	
 	return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
 
 def get_predict_stock(start_date = '20170101', end_date = '20180101'):
-	nb_classes = 2
-#     start_date = '20170101'
-#     end_date = get_date_str()
+	nb_classes, pre_dates, fun_callbak = read_date_config()
 	print('predict date:',end_date)
-	total_ahead_dates = 132
-	pre_dates = 3
 	path="data"+os.path.sep+"daily"
 
 	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_predict_stock(ohcl_callback, start_date, end_date, pre_dates, path)
+	(x_train, y_train), (x_test, y_test) = load_predict_stock(fun_callbak, start_date, end_date, pre_dates, path)
 
 	(x_train, input_shape) = reshape_with_channels(x_train)
 	(x_test, _) = reshape_with_channels(x_test)
-	
-# 	x_train = x_train.astype('float32')
-# 	x_test = x_test.astype('float32')
-# 	x_train /= 255
-# 	x_test /= 255
-# 	print("*********** y_test:", y_test)
-	# convert class vectors to binary class matrices
+
 	y_train = keras.utils.to_categorical(y_train, nb_classes)
-# 	y_test = keras.utils.to_categorical(y_test, nb_classes)
-# 	print("######## y_test:", y_test)
 	
 	return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
 
 def get_test_stock(start_date = '20170101', end_date = '20180101'):
-	nb_classes = 2
-#     start_date = '20170101'
-#     end_date = get_date_str()
+	nb_classes, pre_dates, fun_callbak = read_date_config()
 	print('test date:',end_date)
-	total_ahead_dates = 133
-	pre_dates = 3
 	path="data"+os.path.sep+"daily"
 
 	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_test_stock(ohcl_callback, start_date, end_date, pre_dates, path)
+	(x_train, y_train), (x_test, y_test) = load_test_stock(fun_callbak, start_date, end_date, pre_dates, path)
 
 	(x_train, input_shape) = reshape_with_channels(x_train)
 	(x_test, _) = reshape_with_channels(x_test)
-	
-# 	x_train = x_train.astype('float32')
-# 	x_test = x_test.astype('float32')
-# 	x_train /= 255
-# 	x_test /= 255
-# 	print("*********** y_test:", y_test)
-	# convert class vectors to binary class matrices
+
 	y_train = keras.utils.to_categorical(y_train, nb_classes)
-# 	y_test = keras.utils.to_categorical(y_test, nb_classes)
-# 	print("######## y_test:", y_test)
 	
 	return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
 
