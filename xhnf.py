@@ -61,7 +61,22 @@ class XHNF (object):
         self.init_config()
         self.init_test_data()
         self.init_model()
-        
+
+
+    def getModelFileName(self):
+        records_dir = 'records' \
+            + os.path.sep + self.config.get_model() \
+            + os.path.sep + self.config.get_dataset()
+        weight_name = "Weight_C"+str(self.data.nb_classes)
+        weight_name = weight_name+"_I"+str(self.data.input_shape[0])+"_"+str(self.data.input_shape[1])+"_"+str(self.data.input_shape[2])
+        weight_name = weight_name+".h5"
+        file_name = records_dir \
+            + os.path.sep + weight_name
+        #print("input_shape",str(self.data.input_shape), "nb_classes", str(self.data.nb_classes))
+        if os.path.exists(records_dir) == False:
+            os.makedirs(records_dir)
+        return file_name
+
     def train_network(self):
 #         self.model.compile(loss=keras.losses.categorical_crossentropy,
 #               optimizer=keras.optimizers.Adadelta(),
@@ -144,20 +159,6 @@ class XHNF (object):
         score = self.model.evaluate(self.data.x_train, self.data.y_train, verbose=1)
         print('Test loss:', score[0])
         print('Test accuracy:', score[1])
-
-    def getModelFileName(self):
-        records_dir = 'records' \
-            + os.path.sep + self.config.get_model() \
-            + os.path.sep + self.config.get_dataset()
-        weight_name = "Weight_C"+str(self.data.nb_classes)
-        weight_name = weight_name+"_I"+str(self.data.input_shape[0])+"_"+str(self.data.input_shape[1])+"_"+str(self.data.input_shape[2])
-        weight_name = weight_name+".h5"
-        file_name = records_dir \
-            + os.path.sep + weight_name
-        #print("input_shape",str(self.data.input_shape), "nb_classes", str(self.data.nb_classes))
-        if os.path.exists(records_dir) == False:
-            os.makedirs(records_dir)
-        return file_name
 
     def do_predict(self):
         print('do predict.')
