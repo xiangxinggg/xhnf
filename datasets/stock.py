@@ -13,7 +13,7 @@ import datetime
 from datasets.loader import load_stock, load_predict_stock, load_test_stock
 
 def get_nb_classes():
-    return 4
+    return 2
 
 def get_pre_dates():
     return 3
@@ -44,13 +44,13 @@ def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
             lbl = [[0.0]]
     elif nb_classes == 4 :
         if per >= 1 :
-            lbl = [[2.0]]
-        elif per >= 0 and per < 1:
             lbl = [[1.0]]
+        elif per >= 0 and per < 1:
+            lbl = [[0.5]]
         elif per >= -1 and per < 0:
-            lbl = [[-1.0]]
+            lbl = [[-0.5]]
         else:
-            lbl = [[-2.0]]
+            lbl = [[-1.0]]
     else :
         if per > 0 :
             lbl = [[1.0]]

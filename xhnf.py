@@ -78,9 +78,6 @@ class XHNF (object):
         return file_name
 
     def train_network(self):
-#         self.model.compile(loss=keras.losses.categorical_crossentropy,
-#               optimizer=keras.optimizers.Adadelta(),
-#               metrics=['accuracy'])
         filepath = self.getModelFileName()
         checkpoint = ModelCheckpoint(filepath, monitor='val_loss' \
                                      , save_weights_only=True,verbose=1,save_best_only=True, period=1)
@@ -108,6 +105,7 @@ class XHNF (object):
         return True
 
     def train(self):
+        print('do train.')
         train_status = True
         for i in range(1000):
             print('train run', i)
@@ -132,9 +130,7 @@ class XHNF (object):
             self.data = None
 
     def test(self):
-#         self.model.compile(loss=keras.losses.categorical_crossentropy,
-#               optimizer=keras.optimizers.Adadelta(),
-#               metrics=['accuracy'])
+        print('do test.')
         filepath = self.getModelFileName()
 
         if os.path.exists(filepath):
@@ -160,12 +156,8 @@ class XHNF (object):
         print('Test loss:', score[0])
         print('Test accuracy:', score[1])
 
-    def do_predict(self):
+    def predict(self):
         print('do predict.')
-        self.init_predict()
-#         self.model.compile(loss=keras.losses.categorical_crossentropy,
-#               optimizer=keras.optimizers.Adadelta(),
-#               metrics=['accuracy'])
         filepath = self.getModelFileName()
         if os.path.exists(filepath):
             self.model.load_weights(filepath)
@@ -192,6 +184,10 @@ class XHNF (object):
     def do_test(self):
         self.init_test()
         self.test()
+
+    def do_predict(self):
+        self.init_predict()
+        self.predict()
 
 def main():
     print("Start XHNF.")
