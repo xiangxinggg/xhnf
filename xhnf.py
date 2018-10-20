@@ -129,6 +129,30 @@ class XHNF (object):
             del self.data
             self.data = None
 
+    def display_predict(self):
+        y_predict = self.model.predict(self.data.x_train)
+        if self.data.nb_classes == 2:
+            y_res = y_predict[:,1]-y_predict[:,0]
+            y_res = y_res.reshape(y_res.shape[0],1)
+
+            yt = np.delete(self.data.y_train, (0), axis=1)
+
+            y = np.concatenate((self.data.y_test, y_res), axis=1)
+            y = np.concatenate((y, yt), axis=1)
+        elif self.data.nb_classes == 4:
+            y_res = y_predict[:,0]-y_predict[:,1]-y_predict[:,2]-y_predict[:,3]
+            y_res = y_res.reshape(y_res.shape[0],1)
+
+            yt = np.delete(self.data.y_train, (1,2,3), axis=1)
+
+            y = np.concatenate((self.data.y_test, y_res), axis=1)
+            y = np.concatenate((y, yt), axis=1)
+        else:
+            y = np.concatenate((self.data.y_test, y_predict), axis=1)
+            y = np.concatenate((y, self.data.y_train), axis=1)
+
+        print(y)
+
     def test(self):
         print('do test.')
         filepath = self.getModelFileName()
@@ -142,15 +166,7 @@ class XHNF (object):
             print("do not read any test date, so just exit.")
             return
 
-        y_predict = self.model.predict(self.data.x_train)
-        y_res = y_predict[:,1]-y_predict[:,0]
-        y_res = y_res.reshape(y_res.shape[0],1)
-
-        yt = np.delete(self.data.y_train, (0), axis=1)
-
-        y = np.concatenate((self.data.y_test, y_res), axis=1)
-        y = np.concatenate((y, yt), axis=1)
-        print(y)
+        self.display_predict()
         
         score = self.model.evaluate(self.data.x_train, self.data.y_train, verbose=1)
         print('Test loss:', score[0])
@@ -167,15 +183,8 @@ class XHNF (object):
             print("train shape:", self.data.x_train.shape)
             print("do not read any predict date, so just exit.")
             return
-        y_predict = self.model.predict(self.data.x_train)
-        y_res = y_predict[:,1]-y_predict[:,0]
-        y_res = y_res.reshape(y_res.shape[0],1)
 
-        yt = np.delete(self.data.y_train, (0), axis=1)
-
-        y = np.concatenate((self.data.y_test, y_res), axis=1)
-        y = np.concatenate((y, yt), axis=1)
-        print(y)
+        self.display_predict()
 
     def do_train(self):
         self.init()
