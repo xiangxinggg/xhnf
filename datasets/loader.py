@@ -23,8 +23,8 @@ class Loader (object):
                  , col_start=1, row_start=1, delimiter=",", dtype=dtypes.float32):
         data = np.genfromtxt(fname, delimiter=delimiter, skip_header=row_start, dtype=str)
         if data.shape[0] < moving_window:
-            print("can't read enough row data from cvs file",fname)
-            print('row shape:', data.shape)
+            #print("can't read enough row data from cvs file",fname)
+            #print('row shape:', data.shape)
             return None, None
         #print('row shape:', data.shape)
         #   print('data[0]',data[0])

@@ -13,7 +13,7 @@ import datetime
 from datasets.loader import load_stock, load_predict_stock, load_test_stock
 
 def get_nb_classes():
-    return 2
+    return 4
 
 def get_pre_dates():
     return 3
