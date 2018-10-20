@@ -22,10 +22,10 @@ class Loader (object):
     def load_csv(self, fname, max_items, start_date='20170102', end_date='20180203', moving_window=128 \
                  , col_start=1, row_start=1, delimiter=",", dtype=dtypes.float32):
         data = np.genfromtxt(fname, delimiter=delimiter, skip_header=row_start, dtype=str)
-        if data.shape[0] <= 0:
+        if data.shape[0] < moving_window:
             print("can't read cvs file",fname)
             print('row shape:', data.shape)
-            return data, None
+            return None, None
         #print('row shape:', data.shape)
         #   print('data[0]',data[0])
         #   for _ in range(row_start):
@@ -127,7 +127,7 @@ class Loader (object):
           sys.stdout.write("\r[%s%s] %d/%d,code:%s\r" % ('#' * done, ' ' * (50 - done),ii,total, code))
           sys.stdout.flush()
           data,date = self.load_csv(dir_item_path, max_items, start_date, end_date, moving_window)
-          if data.shape[0] <= 0:
+          if data is None:
               continue
           ss, ls, ps = self.process_data(data, date, code, pre_dates, moving_window, p_call, predict)
           if stocks_set is None:
