@@ -18,6 +18,9 @@ def get_nb_classes():
 def get_pre_dates():
     return 3
 
+def get_moving_window():
+    return 128
+
 def get_date_str():
     now = datetime.datetime.now()
     date_str = datetime.datetime.strftime(now, "%Y%m%d")
@@ -63,15 +66,16 @@ def ohcl_callback(data, idx, moving_window, pre_dates, label_set):
 def read_date_config():
     nb_classes = get_nb_classes()
     pre_dates = get_pre_dates()
-    return nb_classes, pre_dates, ohcl_callback
+    moving_window = get_moving_window()
+    return nb_classes, pre_dates, moving_window, ohcl_callback
 
 def get_stock(start_date = '20170101', end_date = '20180101'):
 	"""Retrieve the STOCK dataset and process the datasets."""
-	nb_classes, pre_dates, fun_callbak = read_date_config()
+	nb_classes, pre_dates, moving_window, fun_callbak = read_date_config()
 	path="data"+os.path.sep+"daily"
 
 	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_stock(fun_callbak, start_date, end_date, pre_dates, path)
+	(x_train, y_train), (x_test, y_test) = load_stock(fun_callbak, start_date, end_date, pre_dates, path, moving_window)
 
 	(x_train, input_shape) = reshape_with_channels(x_train)
 	(x_test, _) = reshape_with_channels(x_test)
@@ -82,12 +86,12 @@ def get_stock(start_date = '20170101', end_date = '20180101'):
 	return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
 
 def get_predict_stock(start_date = '20170101', end_date = '20180101'):
-	nb_classes, pre_dates, fun_callbak = read_date_config()
+	nb_classes, pre_dates, moving_window, fun_callbak = read_date_config()
 	print('predict date:',end_date)
 	path="data"+os.path.sep+"daily"
 
 	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_predict_stock(fun_callbak, start_date, end_date, pre_dates, path)
+	(x_train, y_train), (x_test, y_test) = load_predict_stock(fun_callbak, start_date, end_date, pre_dates, path, moving_window)
 
 	(x_train, input_shape) = reshape_with_channels(x_train)
 	(x_test, _) = reshape_with_channels(x_test)
@@ -97,12 +101,12 @@ def get_predict_stock(start_date = '20170101', end_date = '20180101'):
 	return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
 
 def get_test_stock(start_date = '20170101', end_date = '20180101'):
-	nb_classes, pre_dates, fun_callbak = read_date_config()
+	nb_classes, pre_dates, moving_window, fun_callbak = read_date_config()
 	print('test date:',end_date)
 	path="data"+os.path.sep+"daily"
 
 	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_test_stock(fun_callbak, start_date, end_date, pre_dates, path)
+	(x_train, y_train), (x_test, y_test) = load_test_stock(fun_callbak, start_date, end_date, pre_dates, path, moving_window)
 
 	(x_train, input_shape) = reshape_with_channels(x_train)
 	(x_test, _) = reshape_with_channels(x_test)

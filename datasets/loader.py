@@ -187,18 +187,18 @@ class Loader (object):
 
 # stock datasets loading
 def load_stock(p_call, start_date, end_date, pre_dates=3, path="data" + os.path.sep + "daily" \
-               , moving_window=128, train_test_ratio=4.0):
+               , moving_window, train_test_ratio=4.0):
     loader = Loader()
     return loader.read_train_data(p_call, start_date, end_date, pre_dates, path, moving_window, train_test_ratio)
 
 
 def load_predict_stock(p_call, start_date, end_date, pre_dates=3, path="data" + os.path.sep + "daily" \
-               , moving_window=128, train_test_ratio=4.0):
+               , moving_window, train_test_ratio=4.0):
     loader = Loader()
     return loader.read_predict_data(p_call, start_date, end_date, pre_dates, path, moving_window, train_test_ratio)
 
 
 def load_test_stock(p_call, start_date, end_date, pre_dates=3, path="data" + os.path.sep + "daily" \
-               , moving_window=128, train_test_ratio=4.0):
+               , moving_window, train_test_ratio=4.0):
     loader = Loader()
     return loader.read_test_data(p_call, start_date, end_date, pre_dates, path, moving_window, train_test_ratio)
