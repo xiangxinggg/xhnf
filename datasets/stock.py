@@ -70,60 +70,59 @@ def read_date_config():
     return nb_classes, pre_dates, moving_window, ohcl_callback
 
 def get_stock(start_date = '20170101', end_date = '20180101'):
-	"""Retrieve the STOCK dataset and process the datasets."""
-	nb_classes, pre_dates, moving_window, fun_callbak = read_date_config()
-	path="data"+os.path.sep+"daily"
+    """Retrieve the STOCK dataset and process the datasets."""
+    nb_classes, pre_dates, moving_window, fun_callbak = read_date_config()
+    path="data"+os.path.sep+"daily"
 
-	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_stock(fun_callbak, start_date, end_date, pre_dates, path, moving_window)
+    # the datasets, split between train and test sets
+    (x_train, y_train), (x_test, y_test) = load_stock(fun_callbak, start_date, end_date, pre_dates, path, moving_window)
 
-	(x_train, input_shape) = reshape_with_channels(x_train)
-	(x_test, _) = reshape_with_channels(x_test)
+    (x_train, input_shape) = reshape_with_channels(x_train)
+    (x_test, _) = reshape_with_channels(x_test)
 
-	y_train = keras.utils.to_categorical(y_train, nb_classes)
-	y_test = keras.utils.to_categorical(y_test, nb_classes)
-	
-	return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
+    y_train = keras.utils.to_categorical(y_train, nb_classes)
+    y_test = keras.utils.to_categorical(y_test, nb_classes)
+
+    return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
 
 def get_predict_stock(start_date = '20170101', end_date = '20180101'):
-	nb_classes, pre_dates, moving_window, fun_callbak = read_date_config()
-	print('predict date:',end_date)
-	path="data"+os.path.sep+"daily"
+    nb_classes, pre_dates, moving_window, fun_callbak = read_date_config()
+    print('predict date:',end_date)
+    path="data"+os.path.sep+"daily"
 
-	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_predict_stock(fun_callbak, start_date, end_date, pre_dates, path, moving_window)
+    # the datasets, split between train and test sets
+    (x_train, y_train), (x_test, y_test) = load_predict_stock(fun_callbak, start_date, end_date, pre_dates, path, moving_window)
 
-	(x_train, input_shape) = reshape_with_channels(x_train)
-	(x_test, _) = reshape_with_channels(x_test)
+    (x_train, input_shape) = reshape_with_channels(x_train)
+    (x_test, _) = reshape_with_channels(x_test)
 
-	y_train = keras.utils.to_categorical(y_train, nb_classes)
-	
-	return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
+    y_train = keras.utils.to_categorical(y_train, nb_classes)
+
+    return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
 
 def get_test_stock(start_date = '20170101', end_date = '20180101'):
-	nb_classes, pre_dates, moving_window, fun_callbak = read_date_config()
-	print('test date:',end_date)
-	path="data"+os.path.sep+"daily"
+    nb_classes, pre_dates, moving_window, fun_callbak = read_date_config()
+    print('test date:',end_date)
+    path="data"+os.path.sep+"daily"
 
-	# the datasets, split between train and test sets
-	(x_train, y_train), (x_test, y_test) = load_test_stock(fun_callbak, start_date, end_date, pre_dates, path, moving_window)
+    # the datasets, split between train and test sets
+    (x_train, y_train), (x_test, y_test) = load_test_stock(fun_callbak, start_date, end_date, pre_dates, path, moving_window)
 
-	(x_train, input_shape) = reshape_with_channels(x_train)
-	(x_test, _) = reshape_with_channels(x_test)
+    (x_train, input_shape) = reshape_with_channels(x_train)
+    (x_test, _) = reshape_with_channels(x_test)
 
-	y_train = keras.utils.to_categorical(y_train, nb_classes)
-	
-	return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
+    y_train = keras.utils.to_categorical(y_train, nb_classes)
+
+    return (nb_classes, input_shape, x_train, x_test, y_train, y_test)
 
 def main():
-	nb_classes, input_shape, x_train, \
-		x_test, y_train, y_test = get_stock()
-	
-	print("========================>>>")
-	print('x_train shape:', x_train.shape)
-	print(x_train.shape[0], 'train samples')
-	print(x_test.shape[0], 'test samples')
-	print("========================<<<")
+    nb_classes, input_shape, x_train, x_test, y_train, y_test = get_stock()
+
+    print("========================>>>")
+    print('x_train shape:', x_train.shape)
+    print(x_train.shape[0], 'train samples')
+    print(x_test.shape[0], 'test samples')
+    print("========================<<<")
 
 if __name__ == '__main__':
     main()
