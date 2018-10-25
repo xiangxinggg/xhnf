@@ -30,7 +30,7 @@ class XHNF (object):
     def init_predict_data(self):
         now = datetime.datetime.now()
         end_date = datetime.datetime.strftime(now, "%Y%m%d")
-        start = now+datetime.timedelta(days=-5)
+        start = now+datetime.timedelta(days=-7)
         start_date = datetime.datetime.strftime(start, "%Y%m%d")
         self.data = get_predict_data(self.config.dataset, start_date, end_date)
 
@@ -129,7 +129,17 @@ class XHNF (object):
             del self.data
             self.data = None
 
-    def display_predict(self):
+    def save_predict(self, y):
+        now = datetime.datetime.now()
+        now_str = datetime.datetime.strftime(now, "%Y%m%d")
+        records_dir = 'money' \
+            + os.path.sep + now_str
+        if os.path.exists(records_dir) == False:
+            os.makedirs(records_dir)
+        file_name = records_dir + os.path.sep + now_str+"_predict.csv"
+        np.savetxt(file_name, y, fmt='%s', delimiter=',', header='date,code,predict,real')
+
+    def display_predict(self, need_save=False):
         y_predict = self.model.predict(self.data.x_train)
         if self.data.nb_classes == 2:
             y_res = y_predict[:,1]-y_predict[:,0]
@@ -152,6 +162,8 @@ class XHNF (object):
             y = np.concatenate((y, self.data.y_train), axis=1)
 
         print(y)
+        if need_save == True:
+            self.save_predict(y)
 
     def test(self):
         print('do test.')
@@ -184,7 +196,7 @@ class XHNF (object):
             print("do not read any predict date, so just exit.")
             return
 
-        self.display_predict()
+        self.display_predict(True)
 
     def do_train(self):
         self.init()
