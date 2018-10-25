@@ -27,7 +27,7 @@ class Entitys (object):
     def get_epochs(self):
         return self.epochs
     def get_input_shape(self):
-        return input_shape
+        return self.input_shape
     def get_batch_size(self):
         return self.batch_size
     def get_x_train(self):
