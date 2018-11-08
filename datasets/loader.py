@@ -19,6 +19,15 @@ class Loader (object):
     def __init__(self):
         pass
     
+    def get_week_day(self, dateStr):
+        if dateStr.find('-') > 0 :
+            date = datetime.datetime.strptime(dateStr, '%Y-%m-%d')
+        else:
+            date = datetime.datetime.strptime(dateStr, '%Y%m%d')
+        week_day = date.weekday()+1
+        day = date.day
+        return week_day, day
+
     def load_csv(self, fname, max_items, start_date='20170102', end_date='20180203', moving_window=128 \
                  , col_start=1, row_start=1, delimiter=",", dtype=dtypes.float32):
         data = np.genfromtxt(fname, delimiter=delimiter, skip_header=row_start, dtype=str)
@@ -73,6 +82,17 @@ class Loader (object):
         data = data[::-1]
         date = date[::-1]
         #   print('data[0]',data[0])
+
+        date_set = np.zeros([0, 2])
+        for idx in range(date.shape[0]):
+            #print(date[idx])
+            week_day, day = self.get_week_day(date[idx][0])
+            #print(week_day, day, date[idx][0])
+            my_date = [[week_day, day]]
+            date_set = np.concatenate((date_set, my_date), axis=0)
+
+        data = np.concatenate((data, date_set), axis=1)
+        #print("data.shape", data.shape, "date.shape", date.shape)
         return data, date
 
     # process a single file's datasets into usable arrays
